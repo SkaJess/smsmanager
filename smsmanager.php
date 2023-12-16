@@ -22,15 +22,18 @@ if (file_exists($csvFile)) {
         // Lit et affiche chaque ligne du fichier
         while (($data = fgetcsv($file,0, $config['delimitateurCSV'])) !== false) {
             $rendezVous  = new RendezVous(); 
-            $rendezVous->setPhoneNumber($data[0]); // Numéro de téléphone
-            $rendezVous->setDoctorName($data[1]);  // Nom du médecin
-            $rendezVous->setService($data[2]);     // Service
-            $rendezVous->setDateAppointment($data[3]); // Date du rendez-vous
-            $rendezVous->setTimeAppointment($data[4]); // Heure du rendez-vous
+            $rendezVous->setStructure($data[0]);
+            $rendezVous->setPhoneNumber($data[1]); // Numéro de téléphone
+            $rendezVous->setDoctorName($data[2]);  // Nom du médecin
+            $rendezVous->setService($data[3]);     // Service
+            $rendezVous->setDateAppointment($data[4]); // Date du rendez-vous
+            $rendezVous->setTimeAppointment($data[5]); // Heure du rendez-vous
             $listeRendezVous[] = $rendezVous;
         }
 
-        echo "Chargement de ".count($listeRendezVous)." rendez-vous terminé.\n";
+        echo "Chargement de ".count($listeRendezVous)." rendez-vous .\n";
+        echo "Traitement des Rendez Vous \n";
+
 
         // Traitement du fichier 
         foreach($listeRendezVous as $rdv) {
@@ -41,6 +44,8 @@ if (file_exists($csvFile)) {
                 $nbErreurs++;
              }
         }
+        echo "Nb de SMS de rappels de rendez vous transmis: ".$nbEnvois."\n";
+        echo "Nb d'anomalies identifiées: ".$nbErreurs."\n";
         // Ferme le fichier
         fclose($file);
     } else {

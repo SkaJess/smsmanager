@@ -6,6 +6,7 @@ class RendezVous {
     private $dateAppointment;
     private $timeAppointment;
     private $message;
+    private $structure;
 
     public function __construct($phoneNumber=null, $doctorName=null, $service=null, $dateAppointment=null, $timeAppointment=null) {
         $this->phoneNumber = $phoneNumber;
@@ -23,6 +24,13 @@ class RendezVous {
         $this->message = $message;
     }
 
+  public function getStructure() {
+        return $this->structure;
+    }
+
+    public function setStructure($structure) {
+        $this->structure = $structure;
+    }
 
     public function getPhoneNumber() {
         return $this->phoneNumber;
@@ -65,7 +73,7 @@ class RendezVous {
     }
 
     public function preparationMessage() {
-        $this->message = "Bonjour, nous vous rappelons votre RDV avec ".$this->getDoctorName()." le ".$this->getDateAppointment()." à ".$this->getTimeAppointment();
+        $this->message = "Bonjour, nous vous rappelons votre RDV avec ".$this->getDoctorName()." le ".$this->getDateAppointment()." à ".$this->getTimeAppointment()." au ".$this->getStructure();
     }
     public function envoyerSMSRappel() {
         $this->preparationMessage();
