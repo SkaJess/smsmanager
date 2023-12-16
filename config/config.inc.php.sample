@@ -1,0 +1,3 @@
+<?php
+    $config['fichierSource'] = './sample/sample.csv';   // Fichier source comprenant la liste des informations sous format CSV
+
