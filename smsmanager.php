@@ -7,23 +7,29 @@ require_once('./class/ApplicationManager.php');
 $manager = new ApplicationManager();
 if ($config['debugMode'] == true) {
     $manager->setMode(ApplicationManager::MODE_DEBUG);
+    $manager->display('Mode DEBUG : Les SMS ne seront pas envoyés');
 } else {
     $manager->setMode(ApplicationManager::MODE_PRODUCTION);
+    $manager->display("Mode PRODUCTION : Les SMS seront envoyés");
 }
-
-// Chemin vers le fichier CSV
-$csvFile = $config['sourceFile'];
+$manager->display("Chargement de la configuration");
+$manager->setSourceFile($config['sourceFile']);
+$manager->display("> Fichier Source : " . $manager->getSourceFile());
+$manager->setSuccessOutputFile($config['successOutputFile']);
+$manager->display("> Fichier des envois SMS avec succès : " . $manager->getSuccessOutputFile());
+$manager->setErrorsOutputFile($config['errorsOutputFile']);
+$manager->display("> Fichier des SMS en erreur : " . $manager->getErrorsOutputFile());
+$manager->display('Vérification de la configuration');
 $listeRendezVous = array(); // Liste des Rendez Vous à traiter
 $listeAnomalies = array(); // Liste des Rendez Vous en erreur
 $nbEnvois = 0;  // Nb d'Envois réalisés
 $nbErreurs = 0; // Nb d'erreurs détectés
 
-$manager->display("Fichier Source : $csvFile");
 
 // Vérification de l'existence du fichier
-if (file_exists($csvFile)) {
+if (file_exists($manager->getSourceFile())) {
     // Ouvre le fichier en lecture
-    $file = fopen($csvFile, 'r');
+    $file = fopen($manager->getSourceFile(), 'r');
 
     // Vérification de l'ouverture du fichier
     if ($file) {
