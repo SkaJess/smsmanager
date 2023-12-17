@@ -86,11 +86,13 @@ class RendezVous {
     }
 
     function isMobilePhone() {
+        $numeroSansSeparateurs = preg_replace('/[-.\/]/', '', $this->getPhoneNumber());
+
       // Expression régulière pour un numéro de téléphone portable français
         $pattern = "/^(0|\\+33|0033)[67]([0-9]{8})$/";
 
         // Vérifie si le numéro correspond au pattern
-        if (preg_match($pattern, $this->getPhoneNumber())) {
+        if (preg_match($pattern, $numeroSansSeparateurs)) {
             return true; // Le numéro est un portable
         } else {
             return false; // Le numéro n'est pas un portable
