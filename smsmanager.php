@@ -37,7 +37,7 @@ if (file_exists($csvFile)) {
 
         // Traitement du fichier 
         foreach($listeRendezVous as $rdv) {
-            if ($rdv->envoyerSMSRappel() == false) { 
+            if ($rdv->envoyerSMSRappel() == true) { 
                 $nbEnvois++;
             }else {
                 $listeAnomalies[] = $rdv;

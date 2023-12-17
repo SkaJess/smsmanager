@@ -76,7 +76,25 @@ class RendezVous {
         $this->message = "Bonjour, nous vous rappelons votre RDV avec ".$this->getDoctorName()." le ".$this->getDateAppointment()." à ".$this->getTimeAppointment()." au ".$this->getStructure();
     }
     public function envoyerSMSRappel() {
-        $this->preparationMessage();
-        echo $this->getMessage()."\n";
+        if ($this->isMobilePhone()) {
+            $this->preparationMessage();
+            echo $this->getMessage()."\n";
+            return true;
+        } else {
+            return false;
+        }
     }
+
+    function isMobilePhone() {
+      // Expression régulière pour un numéro de téléphone portable français
+        $pattern = "/^(0|\\+33|0033)[67]([0-9]{8})$/";
+
+        // Vérifie si le numéro correspond au pattern
+        if (preg_match($pattern, $this->getPhoneNumber())) {
+            return true; // Le numéro est un portable
+        } else {
+            return false; // Le numéro n'est pas un portable
+        }
+}
+
 }
