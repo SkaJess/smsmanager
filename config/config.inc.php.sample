@@ -1,3 +1,9 @@
 <?php
-    $config['fichierSource'] = './sample/sample.csv';   // Fichier source comprenant la liste des informations sous format CSV
+    $config['sourceFile']['name'] = './sample/input/sample.csv';   // Fichier source comprenant la liste des informations sous format CSV
+    $config['sourceFile']['ignoreFirstLine'] = false;  // Si la valeur est à true, la première ligne sera ignorée. (entete colonnes)
+    $config['successOutputFile'] = './sample/ouput/success.csv'; // Fichier de sortie des résultats
+    $config['errorsOutputFile'] = './sample/output/errors.csv';
+    $config['csvSeparator'] = ";";   // Défini le séparateur de Champ
+    $config['debugMode'] = true;
+    $config['smsMode']['apiToken'] = '1234567';  // Clé API pour SMS Mode
 
