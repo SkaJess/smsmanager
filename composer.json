@@ -1,0 +1,5 @@
+{
+    "require": {
+        "webeweb/smsmode-library": "^4.5"
+    }
+}

@@ -22,7 +22,10 @@ class ApplicationManager
     public function display(string $message)
     {
         if ($this->mode === self::MODE_DEBUG) {
+            echo "[DEBUG] " . $message . "\n";
+        } else {
             echo $message . "\n";
+
         }
     }
 
