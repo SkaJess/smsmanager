@@ -45,7 +45,7 @@ class Campaign
         }
     }
 
-    public function send($manager)
+    public function send(ApplicationManager $manager)
     {
         // Traitement du fichier 
         foreach ($this->getListeRendezVous() as $rdv) {

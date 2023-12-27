@@ -11,6 +11,13 @@ require_once('./class/SMSMode.php');
 $manager = new ApplicationManager();
 $manager->display("");
 $manager->display("Chargement de la configuration");
+if ($config['verboseMode'] == true) {
+    $manager->setVerbose(ApplicationManager::VERBOSE_ON);
+    $manager->display(' > Mode VERBOSE : Le programme affiche le détail des opérations effectuées');
+} else {
+    $manager->setVerbose(ApplicationManager::VERBOSE_OFF);
+    $manager->display(" > Mode VERBOSE OFF : Le programme n affiche pas le détail des opérations");
+}
 
 if ($config['debugMode'] == true) {
     $manager->setMode(ApplicationManager::MODE_DEBUG);
@@ -40,6 +47,7 @@ if ($statusInputFile == true) {
     $manager->display(" > Ouverture du fichier source : OK");
 } else {
     $manager->display(" > Ouverture du fichier source : ECHEC ");
+    throw new \Exception("Fichier source introuvable ou droits d'accès insuffisants :" . $manager->getSourceFile());
 }
 
 if (file_exists($manager->getErrorsOutputFile())) {

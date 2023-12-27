@@ -5,10 +5,13 @@ class ApplicationManager
 
     public const MODE_DEBUG = 'DEBUG';
     public const MODE_PRODUCTION = 'PRODUCTION';
+    public const VERBOSE_ON = 'VERBOSE_ON';
+    public const VERBOSE_OFF = 'VERBOSE_OFF';
     private $mode; // Indique le mode de fonctionnement de l'application
     private $sourceFile; // Indique le fichier source à traiter
     private $successOutputFile; // Indique le fichier où seront stockés les envois qui auront été correectement envoyés.
     private $errorsOutputFile;  // Indique le fichier où seront stockés les envois qui sont en échec.
+    private $verbose; // Si true, alors le programme affiche des informations sur le traitement.
 
     public function __construct()
     {
@@ -21,15 +24,15 @@ class ApplicationManager
     }
     public function display(string $message)
     {
-        if ($this->mode === self::MODE_DEBUG) {
-            echo "[DEBUG] " . $message . "\n";
-        } else {
-            echo $message . "\n";
+        if ($this->verbose == true) {
+            if ($this->mode === self::MODE_DEBUG) {
+                echo "[DEBUG] " . $message . "\n";
+            } else {
+                echo $message . "\n";
 
+            }
         }
     }
-
-
 
     /**
      * Get the value of sourceFile
@@ -81,6 +84,28 @@ class ApplicationManager
     public function setErrorsOutputFile($errorsOutputFile): self
     {
         $this->errorsOutputFile = $errorsOutputFile;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of verbose
+     */
+    public function isVerbose()
+    {
+        return $this->verbose;
+    }
+
+    /**
+     * Set the value of verbose
+     */
+    public function setVerbose($verbose): self
+    {
+        if ($verbose == self::VERBOSE_ON) {
+            $this->verbose = true;
+        } else {
+            $this->verbose = false;
+        }
 
         return $this;
     }
