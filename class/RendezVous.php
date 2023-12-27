@@ -1,4 +1,5 @@
 <?php
+require_once(dirname(__FILE__) . "/SMSInterface.php");
 class RendezVous
 {
 
@@ -11,6 +12,7 @@ class RendezVous
     private $message;
     private $structure;
     private $status;
+    private SMSInterface $smsProvider; // Fournisseur de SMS. Sera utilisé si on souhaite envoyer le SMS à partir de cette classe.
 
     public function __construct($phoneNumber = null, $doctorName = null, $service = null, $dateAppointment = null, $timeAppointment = null)
     {
@@ -137,5 +139,12 @@ class RendezVous
         $this->formatedPhoneNumber = preg_replace('/[^\d]/i', '', $formatedPhoneNumber);
         return $this;
     }
-
+    public function setSMSProvider($smsProvider)
+    {
+        if ($smsProvider instanceof SMSInterface) {
+            $this->smsProvider = $smsProvider;
+        } else {
+            throw new \InvalidArgumentException('Le paramêtre doit implémenter la classe SMSInterface');
+        }
+    }
 }

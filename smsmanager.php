@@ -3,7 +3,7 @@
 require_once('./vendor/autoload.php');
 require_once("./config/config.inc.php");
 require_once('./class/RendezVous.php');
-require_once('./class/Campagne.php');
+require_once('./class/Campaign.php');
 require_once('./class/ApplicationManager.php');
 require_once('./class/SMSMode.php');
 
@@ -70,7 +70,7 @@ $listeAnomalies = array(); // Liste des Rendez Vous en erreur
 $nbEnvois = 0;  // Nb d'Envois réalisés
 $nbErreurs = 0; // Nb d'erreurs détectées
 $compteurRdv = array();
-$listeRendezVous = new Campagne();
+$listeRendezVous = new Campaign();
 $smsProvider = new SMSMode($config['debugMode']);
 $smsProvider->setApiToken($config['smsMode']['apiToken']);
 $listeRendezVous->setSMSProvider($smsProvider);
@@ -94,24 +94,10 @@ if ($inputFile) {
     $manager->display("");
     $manager->display("Chargement des " . $listeRendezVous->NumberOfRendezVous() . " rendez-vous");
     $manager->display("Traitement des Rendez Vous");
-
-    // Traitement du fichier 
-    foreach ($listeRendezVous->getListeRendezVous() as $rdv) {
-        $manager->display("");
-        $manager->display(" > Numéro de téléphone  : " . $rdv->getPhoneNumber() . " -> Numéro de téléphone formaté : " . $rdv->getFormatedPhoneNumber());
-        $manager->display(" > Nb de Rdv Programmés : " . $listeRendezVous->getNbRdvByPhoneNumber($rdv->getFormatedPhoneNumber()));
-        if ($rdv->envoyerSMSRappel() == true) {
-            $manager->display(" > Envoi de SMS : OK");
-            $nbEnvois++;
-        } else {
-            $manager->display(" > Envoi de SMS : Echec");
-            $listeAnomalies[] = $rdv;
-            $nbErreurs++;
-        }
-    }
+    $listeRendezVous->send($manager);
     $manager->display("");
-    $manager->display("Nb de SMS de rappels de rendez vous transmis: " . $nbEnvois);
-    $manager->display("Nb d'anomalies identifiées: " . $nbErreurs);
+    $manager->display("Nb de SMS de rappels de rendez vous transmis: " . $listeRendezVous->getNbEnvois());
+    $manager->display("Nb d'anomalies identifiées: " . $listeRendezVous->getNbErreurs());
     // Ferme le fichier
     fclose($inputFile);
 }

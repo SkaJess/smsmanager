@@ -2,12 +2,13 @@
 
 require_once(dirname(__FILE__) . "/RendezVous.php");
 require_once(dirname(__FILE__) . "/SMSInterface.php");
-class Campagne
+class Campaign
 {
     private $listeRendezVous = array();
     private $nbRendezVous = array();
     private SMSInterface $smsProvider;
-
+    private int $nbEnvois = 0;
+    private int $nbErreurs = 0;
     public function addRendezVous(RendezVous $rdv)
     {
         $this->listeRendezVous[] = $rdv;
@@ -44,4 +45,42 @@ class Campagne
         }
     }
 
+    public function send($manager)
+    {
+        // Traitement du fichier 
+        foreach ($this->getListeRendezVous() as $rdv) {
+            $manager->display("");
+            $manager->display(" > Numéro de téléphone  : " . $rdv->getPhoneNumber() . " -> Numéro de téléphone formaté : " . $rdv->getFormatedPhoneNumber());
+            $manager->display(" > Nb de Rdv Programmés : " . $this->getNbRdvByPhoneNumber($rdv->getFormatedPhoneNumber()));
+            if ($rdv->envoyerSMSRappel() == true) {
+                $manager->display(" > Envoi de SMS : OK");
+                $this->nbEnvois++;
+            } else {
+                $manager->display(" > Envoi de SMS : Echec");
+                $listeAnomalies[] = $rdv;
+                $this->nbErreurs++;
+            }
+        }
+
+    }
+
+    /**
+     * Get the value of nbEnvois
+     *
+     * @return int
+     */
+    public function getNbEnvois(): int
+    {
+        return $this->nbEnvois;
+    }
+
+    /**
+     * Get the value of nbErreurs
+     *
+     * @return int
+     */
+    public function getNbErreurs(): int
+    {
+        return $this->nbErreurs;
+    }
 }
