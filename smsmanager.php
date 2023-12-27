@@ -19,7 +19,7 @@ if ($config['debugMode'] == true) {
     $manager->setMode(ApplicationManager::MODE_PRODUCTION);
     $manager->display(" > Mode PRODUCTION : Les SMS seront envoyés");
 }
-$manager->setSourceFile($config['sourceFile']);
+$manager->setSourceFile($config['sourceFile']['name']);
 $manager->display(" > Fichier Source : " . $manager->getSourceFile());
 $manager->setSuccessOutputFile($config['successOutputFile']);
 $manager->display(" > Fichier des envois SMS  : " . $manager->getSuccessOutputFile());
@@ -74,18 +74,22 @@ $listeRendezVous = new Campagne();
 $smsProvider = new SMSMode($config['debugMode']);
 $smsProvider->setApiToken($config['smsMode']['apiToken']);
 $listeRendezVous->setSMSProvider($smsProvider);
+$firstLine = true;
 // Vérification de l'ouverture du fichier
 if ($inputFile) {
     // Lit et affiche chaque ligne du fichier
     while (($data = fgetcsv($inputFile, 0, $config['csvSeparator'])) !== false) {
-        $rendezVous = new RendezVous();
-        $rendezVous->setStructure($data[0]);
-        $rendezVous->setPhoneNumber($data[1]); // Numéro de téléphone
-        $rendezVous->setDoctorName($data[2]);  // Nom du médecin
-        $rendezVous->setService($data[3]);     // Service
-        $rendezVous->setDateAppointment($data[4]); // Date du rendez-vous
-        $rendezVous->setTimeAppointment($data[5]); // Heure du rendez-vous
-        $listeRendezVous->addRendezVous($rendezVous);
+        if (($firstLine == false) || ($config['sourceFile']['ignoreFirstLine'] == false)) {
+            $rendezVous = new RendezVous();
+            $rendezVous->setStructure($data[0]);
+            $rendezVous->setPhoneNumber($data[1]); // Numéro de téléphone
+            $rendezVous->setDoctorName($data[2]);  // Nom du médecin
+            $rendezVous->setService($data[3]);     // Service
+            $rendezVous->setDateAppointment($data[4]); // Date du rendez-vous
+            $rendezVous->setTimeAppointment($data[5]); // Heure du rendez-vous
+            $listeRendezVous->addRendezVous($rendezVous);
+        }
+        $firstLine = false;
     }
     $manager->display("");
     $manager->display("Chargement des " . $listeRendezVous->NumberOfRendezVous() . " rendez-vous");
