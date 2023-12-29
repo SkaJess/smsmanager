@@ -1,10 +1,12 @@
 <?php
+    // Renommer le fichier en config.inc.php et ajuster les variables nécessaires.
     $config['sourceFile']['name'] = './sample/input/sample.csv';   // Fichier source comprenant la liste des informations sous format CSV
     $config['sourceFile']['ignoreFirstLine'] = false;  // Si la valeur est à true, la première ligne sera ignorée. (entete colonnes)
-    $config['successOutputFile'] = './sample/ouput/success.csv'; // Fichier de sortie des résultats
+    $config['successOutputFile'] = './sample/output/success.csv'; // Fichier de sortie des résultats
     $config['errorsOutputFile'] = './sample/output/errors.csv';
     $config['csvSeparator'] = ";";   // Défini le séparateur de Champ
-    $config['debugMode'] = true;
-    $config['verboseMode"] = true;
+    $config['debugMode'] = false;   // Si true, les SMS ne seront pas envoyés.
+    $config['smsTrace'] = false; // Si true, l'envoi des SMS sera détaillé par le provider.
+    $config['verboseMode'] = true;  // Si true, le programme affiche le détail des actions
     $config['smsMode']['apiToken'] = '1234567';  // Clé API pour SMS Mode
 

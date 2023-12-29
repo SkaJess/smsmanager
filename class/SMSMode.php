@@ -48,7 +48,9 @@ class SMSMode implements SMSInterface
     public function sendSMS()
     {
         if ($this->smsRequest->getNumero()) {
-            $this->provider->sendingSmsMessage($this->smsRequest);
+            return $this->provider->sendingSmsMessage($this->smsRequest);
+        } else {
+            return null;
         }
     }
 }

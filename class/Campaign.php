@@ -47,17 +47,32 @@ class Campaign
 
     public function send(ApplicationManager $manager)
     {
-        // Traitement du fichier 
+        // Traitement de la liste des rendez vous  
         foreach ($this->getListeRendezVous() as $rdv) {
             $manager->display("");
             $manager->display(" > Numéro de téléphone  : " . $rdv->getPhoneNumber() . " -> Numéro de téléphone formaté : " . $rdv->getFormatedPhoneNumber());
             $manager->display(" > Nb de Rdv Programmés : " . $this->getNbRdvByPhoneNumber($rdv->getFormatedPhoneNumber()));
-            if ($rdv->envoyerSMSRappel() == true) {
-                $manager->display(" > Envoi de SMS : OK");
-                $this->nbEnvois++;
+            $request = $this->smsProvider->prepareSMS($rdv->preparationMessage(), $rdv->getFormatedPhoneNumber());
+            if ($manager->getMode() == ApplicationManager::MODE_PRODUCTION) {
+                $response = $this->smsProvider->sendSMS();
+                $manager->display(" > Envoi du SMS : PRODUCTION");
+                $rdv->setSmsStatusCode($response->getCode());
+                $rdv->setSmsstatusDescription($response->getDescription());
+                $rdv->setSmsId($response->getSMSId());
+                $manager->display(" > Code Réponse : " . $response->getCode());
+                $manager->display(" > Description Réponse : " . $response->getDescription());
+                $manager->display(" > ID SMS : " . $response->getSMSId());
+                if ($rdv->getSmsStatusCode() == 0) {
+                    $this->nbEnvois++;
+                } else {
+                    $this->nbErreurs++;
+                    $listeAnomalies[] = $rdv;
+                }
             } else {
-                $manager->display(" > Envoi de SMS : Echec");
-                $listeAnomalies[] = $rdv;
+                $manager->display(" > Envoi de SMS : DEBUG");
+                $rdv->setSmsStatusCode(-1);
+                $rdv->setSmsstatusDescription('non envoyé:mode debug');
+                $rdv->setSmsId(0);
                 $this->nbErreurs++;
             }
         }

@@ -50,8 +50,8 @@ if ($statusInputFile == true) {
     throw new \Exception("Fichier source introuvable ou droits d'accès insuffisants :" . $manager->getSourceFile());
 }
 
-if (file_exists($manager->getErrorsOutputFile())) {
-    $outputSuccessFile = fopen($manager->getErrorsOutputFile(), 'a');
+if (file_exists($manager->getSuccessOutputFile())) {
+    $outputSuccessFile = fopen($manager->getSuccessOutputFile(), 'w');
     if ($outputSuccessFile) {
         $statusOutputSuccessFile = true;
     }
@@ -79,7 +79,7 @@ $nbEnvois = 0;  // Nb d'Envois réalisés
 $nbErreurs = 0; // Nb d'erreurs détectées
 $compteurRdv = array();
 $listeRendezVous = new Campaign();
-$smsProvider = new SMSMode($config['debugMode']);
+$smsProvider = new SMSMode($config['smsTrace']);
 $smsProvider->setApiToken($config['smsMode']['apiToken']);
 $listeRendezVous->setSMSProvider($smsProvider);
 $firstLine = true;
@@ -103,11 +103,27 @@ if ($inputFile) {
     $manager->display("Chargement des " . $listeRendezVous->NumberOfRendezVous() . " rendez-vous");
     $manager->display("Traitement des Rendez Vous");
     $listeRendezVous->send($manager);
-    $manager->display("");
-    $manager->display("Nb de SMS de rappels de rendez vous transmis: " . $listeRendezVous->getNbEnvois());
-    $manager->display("Nb d'anomalies identifiées: " . $listeRendezVous->getNbErreurs());
+    $manager->display(" > Nb de SMS de rappels de rendez vous transmis: " . $listeRendezVous->getNbEnvois());
+    $manager->display(" > Nb d'anomalies identifiées: " . $listeRendezVous->getNbErreurs());
+    $manager->display("Génération des fichiers de sortie");
+    $entete = array("Structure", "Numéro de Téléphone", "Nom Médecin", "Service", "Date Rendez Vous", "Heure Rendez Vous", "Numéro de téléphone formatté", "Nombre de Rendez vous", "Code Statut SMS", "Description Statut SMS", "ID SMS");
+    fputcsv($outputSuccessFile, $entete, ";");
+    foreach ($listeRendezVous->getListeRendezVous() as $rendezVous) {
+        $ligne = array();
+        $ligne[] = $rendezVous->getStructure();
+        $ligne[] = $rendezVous->getPhoneNumber();
+        $ligne[] = $rendezVous->getDoctorName();
+        $ligne[] = $rendezVous->getService();
+        $ligne[] = $rendezVous->getDateAppointment();
+        $ligne[] = $rendezVous->getTimeAppointment();
+        $ligne[] = $rendezVous->getFormatedPhoneNumber();
+        $ligne[] = $listeRendezVous->getNbRdvByPhoneNumber($rendezVous->getFormatedPhoneNumber());
+        $ligne[] = $rendezVous->getSmsStatusCode();
+        $ligne[] = $rendezVous->getSmsstatusDescription();
+        $ligne[] = $rendezVous->getSmsId();
+        fputcsv($outputSuccessFile, $ligne, ";");
+    }
     // Ferme le fichier
     fclose($inputFile);
+    fclose($outputSuccessFile);
 }
-
-?>

@@ -11,7 +11,10 @@ class RendezVous
     private $timeAppointment;
     private $message;
     private $structure;
-    private $status;
+
+    private $smsId;
+    private $smsStatusCode;
+    private $smsstatusDescription;
     private SMSInterface $smsProvider; // Fournisseur de SMS. Sera utilisé si on souhaite envoyer le SMS à partir de cette classe.
 
     public function __construct($phoneNumber = null, $doctorName = null, $service = null, $dateAppointment = null, $timeAppointment = null)
@@ -97,6 +100,7 @@ class RendezVous
     public function preparationMessage()
     {
         $this->message = "Bonjour, nous vous rappelons votre RDV avec " . $this->getDoctorName() . " le " . $this->getDateAppointment() . " à " . $this->getTimeAppointment() . " au " . $this->getStructure();
+        return $this->message;
     }
     public function envoyerSMSRappel()
     {
@@ -146,5 +150,59 @@ class RendezVous
         } else {
             throw new \InvalidArgumentException('Le paramêtre doit implémenter la classe SMSInterface');
         }
+    }
+
+    /**
+     * Get the value of smsstatusDescription
+     */
+    public function getSmsstatusDescription()
+    {
+        return $this->smsstatusDescription;
+    }
+
+    /**
+     * Set the value of smsstatusDescription
+     */
+    public function setSmsstatusDescription($smsstatusDescription): self
+    {
+        $this->smsstatusDescription = $smsstatusDescription;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of smsStatusCode
+     */
+    public function getSmsStatusCode()
+    {
+        return $this->smsStatusCode;
+    }
+
+    /**
+     * Set the value of smsStatusCode
+     */
+    public function setSmsStatusCode($smsStatusCode): self
+    {
+        $this->smsStatusCode = $smsStatusCode;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of smsId
+     */
+    public function getSmsId()
+    {
+        return $this->smsId;
+    }
+
+    /**
+     * Set the value of smsId
+     */
+    public function setSmsId($smsId): self
+    {
+        $this->smsId = $smsId;
+
+        return $this;
     }
 }

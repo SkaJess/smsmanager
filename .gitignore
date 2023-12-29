@@ -1,3 +1,5 @@
 config/config.inc.php
 sample/input/sample copy.csv
 sample/input/test_unitaire.csv
+sample/output/errors.csv
+sample/output/success.csv

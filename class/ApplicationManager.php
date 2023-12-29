@@ -22,6 +22,10 @@ class ApplicationManager
         $this->mode = $mode;
         return $this;
     }
+    public function getMode()
+    {
+        return $this->mode;
+    }
     public function display(string $message)
     {
         if ($this->verbose == true) {
