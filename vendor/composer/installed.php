@@ -6,7 +6,7 @@
     'aliases' => 
     array (
     ),
-    'reference' => '32c923795a5e8690d46ef2143c8fa110def97ea0',
+    'reference' => '6cb978387b98a5e98d9305ce25efcde2335a092b',
     'name' => '__root__',
   ),
   'versions' => 
@@ -18,7 +18,7 @@
       'aliases' => 
       array (
       ),
-      'reference' => '32c923795a5e8690d46ef2143c8fa110def97ea0',
+      'reference' => '6cb978387b98a5e98d9305ce25efcde2335a092b',
     ),
     'doctrine/collections' => 
     array (
@@ -64,6 +64,15 @@
       array (
       ),
       'reference' => '45b30f99ac27b5ca93cb4831afe16285f57b8221',
+    ),
+    'phpmailer/phpmailer' => 
+    array (
+      'pretty_version' => 'v6.9.1',
+      'version' => '6.9.1.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => '039de174cd9c17a8389754d3b877a2ed22743e18',
     ),
     'psr/http-client' => 
     array (

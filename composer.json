@@ -1,5 +1,6 @@
 {
     "require": {
-        "webeweb/smsmode-library": "^4.5"
+        "webeweb/smsmode-library": "^4.5",
+        "phpmailer/phpmailer": "^6.9"
     }
 }

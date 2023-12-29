@@ -9,4 +9,8 @@
     $config['smsTrace'] = false; // Si true, l'envoi des SMS sera détaillé par le provider.
     $config['verboseMode'] = true;  // Si true, le programme affiche le détail des actions
     $config['smsMode']['apiToken'] = '1234567';  // Clé API pour SMS Mode
+    $config['mail']['server'] = '';
+    $config['mail']['username'] = '';
+    $config['mail']['password'] = '';
+    $config['mail']['to'] = '';
 

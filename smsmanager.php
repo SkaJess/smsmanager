@@ -7,6 +7,8 @@ require_once('./class/Campaign.php');
 require_once('./class/ApplicationManager.php');
 require_once('./class/SMSMode.php');
 
+use PHPMailer\PHPMailer\PHPMailer;
+
 // Chargement de la configuration
 $manager = new ApplicationManager();
 $manager->display("");
@@ -126,4 +128,31 @@ if ($inputFile) {
     // Ferme le fichier
     fclose($inputFile);
     fclose($outputSuccessFile);
+
+    // Envoi du mail de synthèse
+
+
+    $mail = new PHPMailer;
+    $mail->isSMTP();
+    $mail->SMTPDebug = 0;
+    $mail->Host = $config['mail']['server'];
+    $mail->Port = 587;
+    $mail->SMTPAuth = true;
+    $mail->CharSet = 'UTF-8';
+    $mail->Username = $config['mail']['username'];
+    $mail->Password = $config['mail']['password'];
+    $mail->setFrom($config['mail']['username'], 'smsmanager');
+    $mail->addReplyTo($config['mail']['username'], 'smsmanager');
+    $mail->addAddress($config['mail']['to'], '');
+
+    $mail->Subject = '[SMS Mode] Synthèse des envois de confirmation de rendez-vous par SMS';
+    //$mail->msgHTML(file_get_contents('message.html'), __DIR__);
+    $mail->Body = 'Nombre de rendez-vous  : ' . $listeRendezVous->NumberOfRendezVous() . "\nNb de SMS de rappels de rendez-vous envoyés : " . $listeRendezVous->getNbEnvois() . "\nNb d'anomalies identifiées : " . $listeRendezVous->getNbErreurs();
+    //$mail->addAttachment('test.txt');
+    $mail->addAttachment($manager->getSuccessOutputFile());
+    if (!$mail->send()) {
+        echo 'Erreur de Mailer : ' . $mail->ErrorInfo;
+    } else {
+        echo 'Le message a été envoyé.';
+    }
 }

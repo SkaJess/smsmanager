@@ -54,19 +54,27 @@ class Campaign
             $manager->display(" > Nb de Rdv Programmés : " . $this->getNbRdvByPhoneNumber($rdv->getFormatedPhoneNumber()));
             $request = $this->smsProvider->prepareSMS($rdv->preparationMessage(), $rdv->getFormatedPhoneNumber());
             if ($manager->getMode() == ApplicationManager::MODE_PRODUCTION) {
-                $response = $this->smsProvider->sendSMS();
-                $manager->display(" > Envoi du SMS : PRODUCTION");
-                $rdv->setSmsStatusCode($response->getCode());
-                $rdv->setSmsstatusDescription($response->getDescription());
-                $rdv->setSmsId($response->getSMSId());
-                $manager->display(" > Code Réponse : " . $response->getCode());
-                $manager->display(" > Description Réponse : " . $response->getDescription());
-                $manager->display(" > ID SMS : " . $response->getSMSId());
-                if ($rdv->getSmsStatusCode() == 0) {
-                    $this->nbEnvois++;
+                if ($rdv->isMobilePhone()) {
+                    $response = $this->smsProvider->sendSMS();
+                    $manager->display(" > Envoi du SMS : PRODUCTION");
+                    $rdv->setSmsStatusCode($response->getCode());
+                    $rdv->setSmsstatusDescription($response->getDescription());
+                    $rdv->setSmsId($response->getSMSId());
+                    $manager->display(" > Code Réponse : " . $response->getCode());
+                    $manager->display(" > Description Réponse : " . $response->getDescription());
+                    $manager->display(" > ID SMS : " . $response->getSMSId());
+                    if ($rdv->getSmsStatusCode() == 0) {
+                        $this->nbEnvois++;
+                    } else {
+                        $this->nbErreurs++;
+                        $listeAnomalies[] = $rdv;
+                    }
                 } else {
+                    $rdv->setSmsStatusCode(-2);
+                    $rdv->setSmsstatusDescription('Numéro de téléphone incorrect');
                     $this->nbErreurs++;
                     $listeAnomalies[] = $rdv;
+                    $rdv->setSmsId(0);
                 }
             } else {
                 $manager->display(" > Envoi de SMS : DEBUG");
