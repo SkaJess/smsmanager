@@ -55,6 +55,7 @@ if ($statusInputFile == true) {
 if (file_exists($manager->getSuccessOutputFile())) {
     $outputSuccessFile = fopen($manager->getSuccessOutputFile(), 'w');
     if ($outputSuccessFile) {
+        fprintf($outputSuccessFile, chr(0xEF) . chr(0xBB) . chr(0xBF)); // Pour encodage UTF8
         $statusOutputSuccessFile = true;
     }
 }
@@ -130,29 +131,27 @@ if ($inputFile) {
     fclose($outputSuccessFile);
 
     // Envoi du mail de synthèse
-
-
-    $mail = new PHPMailer;
-    $mail->isSMTP();
-    $mail->SMTPDebug = 0;
-    $mail->Host = $config['mail']['server'];
-    $mail->Port = 587;
-    $mail->SMTPAuth = true;
-    $mail->CharSet = 'UTF-8';
-    $mail->Username = $config['mail']['username'];
-    $mail->Password = $config['mail']['password'];
-    $mail->setFrom($config['mail']['username'], 'smsmanager');
-    $mail->addReplyTo($config['mail']['username'], 'smsmanager');
-    $mail->addAddress($config['mail']['to'], '');
-
-    $mail->Subject = '[SMS Mode] Synthèse des envois de confirmation de rendez-vous par SMS';
-    //$mail->msgHTML(file_get_contents('message.html'), __DIR__);
-    $mail->Body = 'Nombre de rendez-vous  : ' . $listeRendezVous->NumberOfRendezVous() . "\nNb de SMS de rappels de rendez-vous envoyés : " . $listeRendezVous->getNbEnvois() . "\nNb d'anomalies identifiées : " . $listeRendezVous->getNbErreurs();
-    //$mail->addAttachment('test.txt');
-    $mail->addAttachment($manager->getSuccessOutputFile());
-    if (!$mail->send()) {
-        echo 'Erreur de Mailer : ' . $mail->ErrorInfo;
-    } else {
-        echo 'Le message a été envoyé.';
+    if (($config['mail']['sendReport'] == true)) {
+        $mail = new PHPMailer;
+        $mail->isSMTP();
+        $mail->SMTPDebug = 0;
+        $mail->Host = $config['mail']['server'];
+        $mail->Port = 587;
+        $mail->SMTPAuth = true;
+        $mail->CharSet = 'UTF-8';
+        $mail->Username = $config['mail']['username'];
+        $mail->Password = $config['mail']['password'];
+        $mail->setFrom($config['mail']['username'], 'smsmanager');
+        $mail->addReplyTo($config['mail']['username'], 'smsmanager');
+        $mail->addAddress($config['mail']['to'], '');
+        $mail->isHTML(true);
+        $mail->Subject = '[SMS Mode] Synthèse des envois de confirmation de rendez-vous par SMS';
+        $mail->Body = 'Nombre de rendez-vous  : ' . $listeRendezVous->NumberOfRendezVous() . "<br/>Nb de SMS de rappels de rendez-vous envoyés : " . $listeRendezVous->getNbEnvois() . "<br/>Nb d'anomalies identifiées : " . $listeRendezVous->getNbErreurs();
+        $mail->addAttachment($manager->getSuccessOutputFile());
+        if (!$mail->send()) {
+            echo 'Erreur de Mailer : ' . $mail->ErrorInfo;
+        } else {
+            echo 'Le message a été envoyé.';
+        }
     }
 }

@@ -1,4 +1,4 @@
-Structure;"Numéro de Téléphone";"Nom Médecin";Service;"Date Rendez Vous";"Heure Rendez Vous";"Numéro de téléphone formatté";"Nombre de Rendez vous";"Code Statut SMS";"Description Statut SMS";"ID SMS"
-"CH Rodez";0682140675;"Docteur Dupont";"Service Anesthésie";03/02/2024;12:00;0682140675;1;0;Accepté;FWvYLrVcorae
-"CH Rodez";0652984096;"Docteur Durand";"Service Imagerie";02/03/2024;08:00;0652984096;1;0;Accepté;YlV7RXEFlDBG
-"CH Rodez";06821675;"Docteur MauvaisNumero";"Service Imaginaire";02/03/2024;08:00;06821675;1;-2;"Numéro de téléphone incorrect";0
+﻿Structure;"Numéro de Téléphone";"Nom Médecin";Service;"Date Rendez Vous";"Heure Rendez Vous";"Numéro de téléphone formatté";"Nombre de Rendez vous";"Code Statut SMS";"Description Statut SMS";"ID SMS"
+"CH Rodez";0682140675;"Docteur Dupont";"Service Anesthésie";03/02/2024;12:00;0682140675;2;-1;"non envoyé:mode debug";0
+"CH Rodez";0682140675;"Docteur Durand";"Service Imagerie";02/03/2024;08:00;0682140675;2;-1;"non envoyé:mode debug";0
+"CH Rodez";06821675;"Docteur MauvaisNumero";"Service Imaginaire";02/03/2024;08:00;06821675;1;-1;"non envoyé:mode debug";0
