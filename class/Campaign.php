@@ -55,6 +55,7 @@ class Campaign
             $request = $this->smsProvider->prepareSMS($rdv->preparationMessage(), $rdv->getFormatedPhoneNumber());
             if ($manager->getMode() == ApplicationManager::MODE_PRODUCTION) {
                 if ($rdv->isMobilePhone()) {
+                    // Vérification de la Date de Rendez-vous
                     $response = $this->smsProvider->sendSMS();
                     $manager->display(" > Envoi du SMS : PRODUCTION");
                     $rdv->setSmsStatusCode($response->getCode());

@@ -117,7 +117,7 @@ if ($inputFile) {
         $ligne[] = $rendezVous->getPhoneNumber();
         $ligne[] = $rendezVous->getDoctorName();
         $ligne[] = $rendezVous->getService();
-        $ligne[] = $rendezVous->getDateAppointment();
+        $ligne[] = $rendezVous->getDateAppointment()->format("Y-m-d");
         $ligne[] = $rendezVous->getTimeAppointment();
         $ligne[] = $rendezVous->getFormatedPhoneNumber();
         $ligne[] = $listeRendezVous->getNbRdvByPhoneNumber($rendezVous->getFormatedPhoneNumber());

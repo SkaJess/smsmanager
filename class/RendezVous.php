@@ -84,7 +84,7 @@ class RendezVous
 
     public function setDateAppointment($dateAppointment)
     {
-        $this->dateAppointment = $dateAppointment;
+        $this->dateAppointment = DateTime::createFromFormat("Y-m-d", $dateAppointment);
     }
 
     public function getTimeAppointment()
@@ -97,9 +97,14 @@ class RendezVous
         $this->timeAppointment = $timeAppointment;
     }
 
+    public function isDateOk()
+    {
+
+    }
+
     public function preparationMessage()
     {
-        $this->message = "Bonjour, nous vous rappelons votre RDV avec " . $this->getDoctorName() . " le " . $this->getDateAppointment() . " à " . $this->getTimeAppointment() . " au " . $this->getStructure();
+        $this->message = "Bonjour, nous vous rappelons votre RDV avec " . $this->getDoctorName() . " le " . $this->getDateAppointment()->format("d/m/Y") . " à " . $this->getTimeAppointment() . " au " . $this->getStructure();
         return $this->message;
     }
     public function envoyerSMSRappel()
