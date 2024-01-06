@@ -96,10 +96,29 @@ class RendezVous
     {
         $this->timeAppointment = $timeAppointment;
     }
-
-    public function isDateOk()
+    /**
+     * La fonction va vérifier si la date du rendez vous est positionnée dans le bon intervale, 
+     * c'est à dire, si la date est comprise entre la date du jour et l'intervalle défini en paramétre exprimé en nombre de jour.
+     * Si pas d'intervalle n'est pas défini, on vérifie seulement que le rendez vous est à venir.
+     * @return array
+     */
+    public function isDateOk(DateTime $now, int $maxIntervalDate): array
     {
+        $status = array();
+        $interval = $now->diff($this->getDateAppointment());
+        $nbDays = intval($interval->format('%r%a days'));
+        if (($maxIntervalDate > 0) && ($nbDays > $maxIntervalDate)) {
+            $status['statusCode'] = false;
+            $status['description'] = "Date trop éloignée";
 
+        } elseif ($nbDays < 0) {
+            $status['statusCode'] = false;
+            $status['description'] = "Date révolue";
+        } else {
+            $status['statusCode'] = true;
+            $status['description'] = "Date OK";
+        }
+        return $status;
     }
 
     public function preparationMessage()

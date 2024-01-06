@@ -2,7 +2,7 @@
     // Renommer le fichier en config.inc.php et ajuster les variables nécessaires.
     $config['sourceFile']['name'] = './sample/input/sample.csv';   // Fichier source comprenant la liste des informations sous format CSV
     $config['sourceFile']['ignoreFirstLine'] = false;  // Si la valeur est à true, la première ligne sera ignorée. (entete colonnes)
-    $config['sourceFile']['maxDistanceDate'] = 7;  // Si différent à 0, indique le nombre de jours max de différences avec la date du jour. Si c'est supérieur, le SMS n'est pas envoyé
+    $config['sourceFile']['maxIntervalDate'] = 7;  // Si différent à 0, indique le nombre de jours max de différences avec la date du jour. Si c'est supérieur, le SMS n'est pas envoyé
     $config['successOutputFile'] = './sample/output/success.csv'; // Fichier de sortie des résultats
     $config['errorsOutputFile'] = './sample/output/errors.csv';
     $config['csvSeparator'] = ";";   // Défini le séparateur de Champ

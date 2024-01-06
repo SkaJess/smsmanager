@@ -9,6 +9,14 @@ class Campaign
     private SMSInterface $smsProvider;
     private int $nbEnvois = 0;
     private int $nbErreurs = 0;
+    private int $maxIntervalDate = 0;
+    private DateTime $now;
+
+    public function __construct()
+    {
+        $this->now = new DateTime();
+    }
+
     public function addRendezVous(RendezVous $rdv)
     {
         $this->listeRendezVous[] = $rdv;
@@ -53,24 +61,35 @@ class Campaign
             $manager->display(" > Numéro de téléphone  : " . $rdv->getPhoneNumber() . " -> Numéro de téléphone formaté : " . $rdv->getFormatedPhoneNumber());
             $manager->display(" > Nb de Rdv Programmés : " . $this->getNbRdvByPhoneNumber($rdv->getFormatedPhoneNumber()));
             $request = $this->smsProvider->prepareSMS($rdv->preparationMessage(), $rdv->getFormatedPhoneNumber());
-            if ($manager->getMode() == ApplicationManager::MODE_PRODUCTION) {
+            $checkDate = $rdv->isDateOk($this->getNow(), $this->getMaxIntervalDate());
+            if ($checkDate['statusCode'] == true) {
                 if ($rdv->isMobilePhone()) {
-                    // Vérification de la Date de Rendez-vous
-                    $response = $this->smsProvider->sendSMS();
-                    $manager->display(" > Envoi du SMS : PRODUCTION");
-                    $rdv->setSmsStatusCode($response->getCode());
-                    $rdv->setSmsstatusDescription($response->getDescription());
-                    $rdv->setSmsId($response->getSMSId());
-                    $manager->display(" > Code Réponse : " . $response->getCode());
-                    $manager->display(" > Description Réponse : " . $response->getDescription());
-                    $manager->display(" > ID SMS : " . $response->getSMSId());
-                    if ($rdv->getSmsStatusCode() == 0) {
-                        $this->nbEnvois++;
+                    if ($manager->getMode() == ApplicationManager::MODE_PRODUCTION) {
+                        $response = $this->smsProvider->sendSMS();
+                        $manager->display(" > Envoi du SMS : PRODUCTION");
+                        $rdv->setSmsStatusCode($response->getCode());
+                        $rdv->setSmsstatusDescription($response->getDescription());
+                        $rdv->setSmsId($response->getSMSId());
+                        $manager->display(" > Code Réponse : " . $response->getCode());
+                        $manager->display(" > Description Réponse : " . $response->getDescription());
+                        $manager->display(" > ID SMS : " . $response->getSMSId());
+                        if ($rdv->getSmsStatusCode() == 0) {
+                            $manager->display(" > SMS Correctement envoyé ");
+                            $this->nbEnvois++;
+                        } else {
+                            $manager->display(" > Erreur lors de l'envoi du SMS ");
+                            $this->nbErreurs++;
+                            $listeAnomalies[] = $rdv;
+                        }
                     } else {
+                        $manager->display(" > Simulation d'envoi de SMS");
+                        $rdv->setSmsStatusCode(-1);
+                        $rdv->setSmsstatusDescription('non envoyé:mode debug');
+                        $rdv->setSmsId(0);
                         $this->nbErreurs++;
-                        $listeAnomalies[] = $rdv;
                     }
                 } else {
+                    $manager->display(" > Numéro de Téléphone incorrect ");
                     $rdv->setSmsStatusCode(-2);
                     $rdv->setSmsstatusDescription('Numéro de téléphone incorrect');
                     $this->nbErreurs++;
@@ -78,12 +97,14 @@ class Campaign
                     $rdv->setSmsId(0);
                 }
             } else {
-                $manager->display(" > Envoi de SMS : DEBUG");
-                $rdv->setSmsStatusCode(-1);
-                $rdv->setSmsstatusDescription('non envoyé:mode debug');
-                $rdv->setSmsId(0);
+                $manager->display(" > Date non valide : " . $checkDate['description']);
+                $rdv->setSmsStatusCode(-3);
+                $rdv->setSmsstatusDescription($checkDate['description']);
                 $this->nbErreurs++;
+                $listeAnomalies[] = $rdv;
+                $rdv->setSmsId(0);
             }
+
         }
 
     }
@@ -106,5 +127,41 @@ class Campaign
     public function getNbErreurs(): int
     {
         return $this->nbErreurs;
+    }
+
+    /**
+     * Get the value of maxIntervalDate
+     *
+     * @return int
+     */
+    public function getMaxIntervalDate(): int
+    {
+        return $this->maxIntervalDate;
+    }
+
+    /**
+     * Set the value of maxIntervalDate
+     * Défini le nombre de jours maximum d'écart avec la dare du jour à laquelle le SMS va etre envoyé.
+     * Par exemple, si défini à 7, tous les rendez vous à plus de 7 jours ne seront pas envoyés.
+     * Si défini à 0, pas de controle sur l'intervalle de date.
+     * @param int $maxIntervalDate
+     *
+     * @return self
+     */
+    public function setMaxIntervalDate(int $maxIntervalDate): self
+    {
+        $this->maxIntervalDate = $maxIntervalDate;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of now
+     *
+     * @return DateTime
+     */
+    public function getNow(): DateTime
+    {
+        return $this->now;
     }
 }

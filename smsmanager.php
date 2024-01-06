@@ -82,6 +82,7 @@ $nbEnvois = 0;  // Nb d'Envois réalisés
 $nbErreurs = 0; // Nb d'erreurs détectées
 $compteurRdv = array();
 $listeRendezVous = new Campaign();
+$listeRendezVous->setMaxIntervalDate($config['sourceFile']['maxIntervalDate']);
 $smsProvider = new SMSMode($config['smsTrace']);
 $smsProvider->setApiToken($config['smsMode']['apiToken']);
 $listeRendezVous->setSMSProvider($smsProvider);
@@ -106,6 +107,7 @@ if ($inputFile) {
     $manager->display("Chargement des " . $listeRendezVous->NumberOfRendezVous() . " rendez-vous");
     $manager->display("Traitement des Rendez Vous");
     $listeRendezVous->send($manager);
+    $manager->display("");
     $manager->display(" > Nb de SMS de rappels de rendez vous transmis: " . $listeRendezVous->getNbEnvois());
     $manager->display(" > Nb d'anomalies identifiées: " . $listeRendezVous->getNbErreurs());
     $manager->display("Génération des fichiers de sortie");
@@ -132,6 +134,7 @@ if ($inputFile) {
 
     // Envoi du mail de synthèse
     if (($config['mail']['sendReport'] == true)) {
+        $manager->display('Envoi du mail du rapport de synthèse');
         $mail = new PHPMailer;
         $mail->isSMTP();
         $mail->SMTPDebug = 0;
@@ -149,9 +152,9 @@ if ($inputFile) {
         $mail->Body = 'Nombre de rendez-vous  : ' . $listeRendezVous->NumberOfRendezVous() . "<br/>Nb de SMS de rappels de rendez-vous envoyés : " . $listeRendezVous->getNbEnvois() . "<br/>Nb d'anomalies identifiées : " . $listeRendezVous->getNbErreurs();
         $mail->addAttachment($manager->getSuccessOutputFile());
         if (!$mail->send()) {
-            echo 'Erreur de Mailer : ' . $mail->ErrorInfo;
+            $manager->display("Erreur lors de l'envoi du mail de synthèse " . $mail->ErrorInfo);
         } else {
-            echo 'Le message a été envoyé.';
+            $manager->display('Le mail de synthèse a été envoyé.');
         }
     }
 }
