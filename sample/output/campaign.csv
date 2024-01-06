@@ -1,4 +1,4 @@
 ﻿Structure;"Numéro de Téléphone";"Nom Médecin";Service;"Date Rendez Vous";"Heure Rendez Vous";"Numéro de téléphone formatté";"Nombre de Rendez vous";"Code Statut SMS";"Description Statut SMS";"ID SMS"
-"CH Rodez";0682140675;"Docteur Dupont";"Service Anesthésie";;12:00;0682140675;2;-3;"Format de date non reconnu";0
+"CH Rodez";0682140675;"Docteur Dupont";"Service Anesthésie";202,c,-02-05;12:00;0682140675;2;-3;"Format de date non reconnu";0
 "CH Rodez";0682140675;"Docteur Durand";"Service Imagerie";2024-01-08;08:00;0682140675;2;-1;"non envoyé:mode debug";0
 "CH Rodez";06821675;"Docteur MauvaisNumero";"Service Imaginaire";2023-02-01;08:00;06821675;1;-3;"Date révolue";0

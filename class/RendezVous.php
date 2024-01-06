@@ -7,6 +7,7 @@ class RendezVous
     private $formatedPhoneNumber;
     private $doctorName;
     private $service;
+    private $originalDateAppointment;
     private $dateAppointment;
     private $timeAppointment;
     private $message;
@@ -85,6 +86,7 @@ class RendezVous
     public function setDateAppointment($dateAppointment)
     {
         try {
+            $this->originalDateAppointment = $dateAppointment;
             $this->dateAppointment = DateTime::createFromFormat("Y-m-d", $dateAppointment);
         } catch (Exception $e) {
             $this->dateAppointment = false;
@@ -237,5 +239,13 @@ class RendezVous
         $this->smsId = $smsId;
 
         return $this;
+    }
+
+    /**
+     * Get the value of originalDateAppointment
+     */
+    public function getOriginalDateAppointment()
+    {
+        return $this->originalDateAppointment;
     }
 }

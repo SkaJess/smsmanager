@@ -110,7 +110,7 @@ if ($inputFile) {
         if ($rendezVous->getDateAppointment()) {
             $ligne[] = $rendezVous->getDateAppointment()->format("Y-m-d");
         } else {
-            $ligne[] = '';
+            $ligne[] = $rendezVous->getOriginalDateAppointment();
         }
         $ligne[] = $rendezVous->getTimeAppointment();
         $ligne[] = $rendezVous->getFormatedPhoneNumber();
