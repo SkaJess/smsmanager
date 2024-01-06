@@ -9,8 +9,7 @@ class ApplicationManager
     public const VERBOSE_OFF = 'VERBOSE_OFF';
     private $mode; // Indique le mode de fonctionnement de l'application
     private $sourceFile; // Indique le fichier source à traiter
-    private $successOutputFile; // Indique le fichier où seront stockés les envois qui auront été correectement envoyés.
-    private $errorsOutputFile;  // Indique le fichier où seront stockés les envois qui sont en échec.
+    private $outputFile; // Indique le fichier de sortie ou seront enregistrés les données avec le statut des envois.
     private $verbose; // Si true, alors le programme affiche des informations sur le traitement.
 
     public function __construct()
@@ -59,35 +58,17 @@ class ApplicationManager
     /**
      * Get the value of successOutputFile
      */
-    public function getSuccessOutputFile()
+    public function getOutputFile()
     {
-        return $this->successOutputFile;
+        return $this->outputFile;
     }
 
     /**
      * Set the value of successOutputFile
      */
-    public function setSuccessOutputFile($successOutputFile): self
+    public function setOutputFile($outputFile): self
     {
-        $this->successOutputFile = $successOutputFile;
-
-        return $this;
-    }
-
-    /**
-     * Get the value of failsOutputFile
-     */
-    public function getErrorsOutputFile()
-    {
-        return $this->errorsOutputFile;
-    }
-
-    /**
-     * Set the value of failsOutputFile
-     */
-    public function setErrorsOutputFile($errorsOutputFile): self
-    {
-        $this->errorsOutputFile = $errorsOutputFile;
+        $this->outputFile = $outputFile;
 
         return $this;
     }

@@ -30,15 +30,12 @@ if ($config['debugMode'] == true) {
 }
 $manager->setSourceFile($config['sourceFile']['name']);
 $manager->display(" > Fichier Source : " . $manager->getSourceFile());
-$manager->setSuccessOutputFile($config['successOutputFile']);
-$manager->display(" > Fichier des envois SMS  : " . $manager->getSuccessOutputFile());
-$manager->setErrorsOutputFile($config['errorsOutputFile']);
-$manager->display(" > Fichier des SMS en erreur : " . $manager->getErrorsOutputFile());
+$manager->setOutputFile($config['outputFile']['name']);
+$manager->display(" > Fichier des envois SMS  : " . $manager->getOutputFile());
 $manager->display("");
 $manager->display("Vérification de la configuration");
 $statusInputFile = false;
-$statusOutputErrosFile = false;
-$statusOutputSuccessFile = false;
+$statusOutputFile = false;
 if (file_exists($manager->getSourceFile())) {
     $inputFile = fopen($manager->getSourceFile(), 'r');
     if ($inputFile) {
@@ -52,8 +49,8 @@ if ($statusInputFile == true) {
     throw new \Exception("Fichier source introuvable ou droits d'accès insuffisants :" . $manager->getSourceFile());
 }
 
-if (file_exists($manager->getSuccessOutputFile())) {
-    $outputSuccessFile = fopen($manager->getSuccessOutputFile(), 'w');
+if (file_exists($manager->getOutputFile())) {
+    $outputSuccessFile = fopen($manager->getOutputFile(), 'w');
     if ($outputSuccessFile) {
         fprintf($outputSuccessFile, chr(0xEF) . chr(0xBB) . chr(0xBF)); // Pour encodage UTF8
         $statusOutputSuccessFile = true;
@@ -65,17 +62,6 @@ if ($statusOutputSuccessFile == true) {
     $manager->display(" > Ouverture du fichier des envois SMS : ECHEC ");
 }
 
-if (file_exists($manager->getErrorsOutputFile())) {
-    $outputErrorsFile = fopen($manager->getErrorsOutputFile(), 'a');
-    if ($outputErrorsFile) {
-        $statusOutputErrorsFile = true;
-    }
-}
-if ($statusOutputErrorsFile == true) {
-    $manager->display(" > Ouverture du fichier des SMS en erreur : OK");
-} else {
-    $manager->display(" > Ouverture du fichier des SMS en erreur : ECHEC ");
-}
 
 $listeAnomalies = array(); // Liste des Rendez Vous en erreur
 $nbEnvois = 0;  // Nb d'Envois réalisés
@@ -150,7 +136,7 @@ if ($inputFile) {
         $mail->isHTML(true);
         $mail->Subject = '[SMS Mode] Synthèse des envois de confirmation de rendez-vous par SMS';
         $mail->Body = 'Nombre de rendez-vous  : ' . $listeRendezVous->NumberOfRendezVous() . "<br/>Nb de SMS de rappels de rendez-vous envoyés : " . $listeRendezVous->getNbEnvois() . "<br/>Nb d'anomalies identifiées : " . $listeRendezVous->getNbErreurs();
-        $mail->addAttachment($manager->getSuccessOutputFile());
+        $mail->addAttachment($manager->getOutputFile());
         if (!$mail->send()) {
             $manager->display("Erreur lors de l'envoi du mail de synthèse " . $mail->ErrorInfo);
         } else {
