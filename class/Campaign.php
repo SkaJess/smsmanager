@@ -60,10 +60,10 @@ class Campaign
             $manager->display("");
             $manager->display(" > Numéro de téléphone  : " . $rdv->getPhoneNumber() . " -> Numéro de téléphone formaté : " . $rdv->getFormatedPhoneNumber());
             $manager->display(" > Nb de Rdv Programmés : " . $this->getNbRdvByPhoneNumber($rdv->getFormatedPhoneNumber()));
-            $request = $this->smsProvider->prepareSMS($rdv->preparationMessage(), $rdv->getFormatedPhoneNumber());
             $checkDate = $rdv->isDateOk($this->getNow(), $this->getMaxIntervalDate());
             if ($checkDate['statusCode'] == true) {
                 if ($rdv->isMobilePhone()) {
+                    $request = $this->smsProvider->prepareSMS($rdv->preparationMessage(), $rdv->getFormatedPhoneNumber());
                     if ($manager->getMode() == ApplicationManager::MODE_PRODUCTION) {
                         $response = $this->smsProvider->sendSMS();
                         $manager->display(" > Envoi du SMS : PRODUCTION");

@@ -79,12 +79,12 @@ if ($inputFile) {
     while (($data = fgetcsv($inputFile, 0, $config['csvSeparator'])) !== false) {
         if (($firstLine == false) || ($config['sourceFile']['ignoreFirstLine'] == false)) {
             $rendezVous = new RendezVous();
-            $rendezVous->setStructure($data[0]);
-            $rendezVous->setPhoneNumber($data[1]); // Numéro de téléphone
-            $rendezVous->setDoctorName($data[2]);  // Nom du médecin
-            $rendezVous->setService($data[3]);     // Service
-            $rendezVous->setDateAppointment($data[4]); // Date du rendez-vous
-            $rendezVous->setTimeAppointment($data[5]); // Heure du rendez-vous
+            $rendezVous->setStructure($data[0]);            // Libellé de la structure
+            $rendezVous->setPhoneNumber($data[1]);          // Numéro de téléphone
+            $rendezVous->setDoctorName($data[2]);           // Nom du médecin
+            $rendezVous->setService($data[3]);              // Service
+            $rendezVous->setDateAppointment($data[4]);      // Date du rendez-vous
+            $rendezVous->setTimeAppointment($data[5]);      // Heure du rendez-vous
             $listeRendezVous->addRendezVous($rendezVous);
         }
         $firstLine = false;
@@ -94,9 +94,11 @@ if ($inputFile) {
     $manager->display("Traitement des Rendez Vous");
     $listeRendezVous->send($manager);
     $manager->display("");
+    $manager->display("Fin de traitement des Rendez Vous");
     $manager->display(" > Nb de SMS de rappels de rendez vous transmis: " . $listeRendezVous->getNbEnvois());
     $manager->display(" > Nb d'anomalies identifiées: " . $listeRendezVous->getNbErreurs());
-    $manager->display("Génération des fichiers de sortie");
+    $manager->display("");
+    $manager->display("Génération du fichier de sortie");
     $entete = array("Structure", "Numéro de Téléphone", "Nom Médecin", "Service", "Date Rendez Vous", "Heure Rendez Vous", "Numéro de téléphone formatté", "Nombre de Rendez vous", "Code Statut SMS", "Description Statut SMS", "ID SMS");
     fputcsv($outputSuccessFile, $entete, ";");
     foreach ($listeRendezVous->getListeRendezVous() as $rendezVous) {
@@ -105,7 +107,11 @@ if ($inputFile) {
         $ligne[] = $rendezVous->getPhoneNumber();
         $ligne[] = $rendezVous->getDoctorName();
         $ligne[] = $rendezVous->getService();
-        $ligne[] = $rendezVous->getDateAppointment()->format("Y-m-d");
+        if ($rendezVous->getDateAppointment()) {
+            $ligne[] = $rendezVous->getDateAppointment()->format("Y-m-d");
+        } else {
+            $ligne[] = '';
+        }
         $ligne[] = $rendezVous->getTimeAppointment();
         $ligne[] = $rendezVous->getFormatedPhoneNumber();
         $ligne[] = $listeRendezVous->getNbRdvByPhoneNumber($rendezVous->getFormatedPhoneNumber());

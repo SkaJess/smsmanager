@@ -56,7 +56,7 @@ class ApplicationManager
     }
 
     /**
-     * Get the value of successOutputFile
+     * Get the value of OutputFile
      */
     public function getOutputFile()
     {
@@ -64,7 +64,7 @@ class ApplicationManager
     }
 
     /**
-     * Set the value of successOutputFile
+     * Set the value of OutputFile
      */
     public function setOutputFile($outputFile): self
     {

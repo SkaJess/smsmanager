@@ -84,7 +84,11 @@ class RendezVous
 
     public function setDateAppointment($dateAppointment)
     {
-        $this->dateAppointment = DateTime::createFromFormat("Y-m-d", $dateAppointment);
+        try {
+            $this->dateAppointment = DateTime::createFromFormat("Y-m-d", $dateAppointment);
+        } catch (Exception $e) {
+            $this->dateAppointment = false;
+        }
     }
 
     public function getTimeAppointment()
@@ -105,18 +109,23 @@ class RendezVous
     public function isDateOk(DateTime $now, int $maxIntervalDate): array
     {
         $status = array();
-        $interval = $now->diff($this->getDateAppointment());
-        $nbDays = intval($interval->format('%r%a days'));
-        if (($maxIntervalDate > 0) && ($nbDays > $maxIntervalDate)) {
-            $status['statusCode'] = false;
-            $status['description'] = "Date trop éloignée";
+        if ($this->getDateAppointment()) {
+            $interval = $now->diff($this->getDateAppointment());
+            $nbDays = intval($interval->format('%r%a days'));
+            if (($maxIntervalDate > 0) && ($nbDays > $maxIntervalDate)) {
+                $status['statusCode'] = false;
+                $status['description'] = "Date trop éloignée";
 
-        } elseif ($nbDays < 0) {
-            $status['statusCode'] = false;
-            $status['description'] = "Date révolue";
+            } elseif ($nbDays < 0) {
+                $status['statusCode'] = false;
+                $status['description'] = "Date révolue";
+            } else {
+                $status['statusCode'] = true;
+                $status['description'] = "Date OK";
+            }
         } else {
-            $status['statusCode'] = true;
-            $status['description'] = "Date OK";
+            $status['statusCode'] = false;
+            $status['description'] = "Format de date non reconnu";
         }
         return $status;
     }
