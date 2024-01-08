@@ -29,7 +29,6 @@ $provider->getAuthentication()->setPass("pass");
 // Create a Sending SMS message request.
 $request = new SendingSmsMessageRequest();
 $request->setMessage("message");
-$request->addNumero("33682140675");
 //$request->addNumero("33600000002");
 // ...
 
