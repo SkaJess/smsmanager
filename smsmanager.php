@@ -28,9 +28,23 @@ if ($config['debugMode'] == true) {
     $manager->setMode(ApplicationManager::MODE_PRODUCTION);
     $manager->display(" > Mode PRODUCTION : Les SMS seront envoyés");
 }
-$manager->setSourceFile($config['sourceFile']['name']);
+
+// Prise en compte de l'argument si celui si est passé en paramétre
+if ($argv[1]) {
+    $sourceFile = $argv[1];
+} else {
+    $sourceFile = $config['sourceFile']['name'];
+}
+$manager->setSourceFile($sourceFile);
 $manager->display(" > Fichier Source : " . $manager->getSourceFile());
-$manager->setOutputFile($config['outputFile']['name']);
+
+if ($argv[2]) {
+    $outputFile = $argv[2] . DIRECTORY_SEPARATOR . basename($manager->getSourceFile(), ".csv") . "-synthese.csv";
+} else {
+    $outputFile = $config['outputFile']['name'];
+}
+
+$manager->setOutputFile($outputFile);
 $manager->display(" > Fichier des envois SMS  : " . $manager->getOutputFile());
 $manager->display("");
 $manager->display("Vérification de la configuration");
@@ -49,20 +63,19 @@ if ($statusInputFile == true) {
     throw new \Exception("Fichier source introuvable ou droits d'accès insuffisants :" . $manager->getSourceFile());
 }
 
-if (file_exists($manager->getOutputFile())) {
-    $outputSuccessFile = fopen($manager->getOutputFile(), 'w');
-    if ($outputSuccessFile) {
-        fprintf($outputSuccessFile, chr(0xEF) . chr(0xBB) . chr(0xBF)); // Pour encodage UTF8
-        $statusOutputSuccessFile = true;
-    }
+$outputSuccessFile = fopen($manager->getOutputFile(), 'w');
+if ($outputSuccessFile) {
+    fprintf($outputSuccessFile, chr(0xEF) . chr(0xBB) . chr(0xBF)); // Pour encodage UTF8
+    $statusOutputFile = true;
 }
-if ($statusOutputSuccessFile == true) {
+
+if ($statusOutputFile == true) {
     $manager->display(" > Ouverture du fichier des envois SMS : OK");
 } else {
     $manager->display(" > Ouverture du fichier des envois SMS : ECHEC ");
 }
 
-
+exit;
 $listeAnomalies = array(); // Liste des Rendez Vous en erreur
 $nbEnvois = 0;  // Nb d'Envois réalisés
 $nbErreurs = 0; // Nb d'erreurs détectées
@@ -72,22 +85,21 @@ $listeRendezVous->setMaxIntervalDate($config['sourceFile']['maxIntervalDate']);
 $smsProvider = new SMSMode($config['smsTrace']);
 $smsProvider->setApiToken($config['smsMode']['apiToken']);
 $listeRendezVous->setSMSProvider($smsProvider);
-$firstLine = true;
+$idLigne = 1;
 // Vérification de l'ouverture du fichier
 if ($inputFile) {
     // Lit et affiche chaque ligne du fichier
     while (($data = fgetcsv($inputFile, 0, $config['csvSeparator'])) !== false) {
-        if (($firstLine == false) || ($config['sourceFile']['ignoreFirstLine'] == false)) {
+        if ($idLigne > $config['sourceFile']['ignoreFirstLines']) {
             $rendezVous = new RendezVous();
-            $rendezVous->setStructure($data[0]);            // Libellé de la structure
-            $rendezVous->setPhoneNumber($data[1]);          // Numéro de téléphone
-            $rendezVous->setDoctorName($data[2]);           // Nom du médecin
-            $rendezVous->setService($data[3]);              // Service
-            $rendezVous->setDateAppointment($data[4]);      // Date du rendez-vous
-            $rendezVous->setTimeAppointment($data[5]);      // Heure du rendez-vous
+            $rendezVous->setDateAppointment($data[0]);      // Date du rendez-vous
+            $rendezVous->setTimeAppointment($data[1]);      // Heure du rendez-vous
+            $rendezVous->setPhoneNumber($data[2]);          // Numéro de téléphone
+            $rendezVous->setStructure($data[3]);            // Libellé de la structure
+            $rendezVous->setService($data[4]);              // Service            
             $listeRendezVous->addRendezVous($rendezVous);
         }
-        $firstLine = false;
+        $idLigne++;
     }
     $manager->display("");
     $manager->display("Chargement des " . $listeRendezVous->NumberOfRendezVous() . " rendez-vous");

@@ -87,7 +87,7 @@ class RendezVous
     {
         try {
             $this->originalDateAppointment = $dateAppointment;
-            $this->dateAppointment = DateTime::createFromFormat("Y-m-d", $dateAppointment);
+            $this->dateAppointment = DateTime::createFromFormat("d/m/Y", $dateAppointment);
         } catch (Exception $e) {
             $this->dateAppointment = false;
         }
@@ -134,7 +134,7 @@ class RendezVous
 
     public function preparationMessage()
     {
-        $this->message = "Bonjour, nous vous rappelons votre RDV avec " . $this->getDoctorName() . " le " . $this->getDateAppointment()->format("d/m/Y") . " à " . $this->getTimeAppointment() . " au " . $this->getStructure();
+        $this->message = "Bonjour, nous vous rappelons votre RDV le " . $this->getDateAppointment()->format("d/m/Y") . " à " . $this->getTimeAppointment() . " au " . $this->getStructure() . " - " . $this->getService();
         return $this->message;
     }
     public function envoyerSMSRappel()
