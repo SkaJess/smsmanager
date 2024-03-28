@@ -147,7 +147,7 @@ if ($inputFile) {
         if (isset($config['mail']['port'])) {
             $mail->Port = $config['mail']['port'];
         }
-        $mail->SMTPAuth = $config['mail'];
+        $mail->SMTPAuth = $config['mail']['SMTPAuth'];
         $mail->CharSet = 'UTF-8';
         $mail->Username = $config['mail']['username'];
         $mail->Password = $config['mail']['password'];
