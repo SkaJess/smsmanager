@@ -29,9 +29,9 @@ class ApplicationManager
     {
         if ($this->verbose == true) {
             if ($this->mode === self::MODE_DEBUG) {
-                echo "[DEBUG] " . $message . "\n";
+                echo date("Y-m-d H:m") . " [DEBUG] " . $message . "\n";
             } else {
-                echo $message . "\n";
+                echo date("Y-m-d H:m") . " " . $message . "\n";
 
             }
         }
