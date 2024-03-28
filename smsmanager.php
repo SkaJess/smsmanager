@@ -75,7 +75,6 @@ if ($statusOutputFile == true) {
     $manager->display(" > Ouverture du fichier des envois SMS : ECHEC ");
 }
 
-exit;
 $listeAnomalies = array(); // Liste des Rendez Vous en erreur
 $nbEnvois = 0;  // Nb d'Envois réalisés
 $nbErreurs = 0; // Nb d'erreurs détectées
@@ -138,13 +137,17 @@ if ($inputFile) {
 
     // Envoi du mail de synthèse
     if (($config['mail']['sendReport'] == true)) {
+
+
         $manager->display('Envoi du mail du rapport de synthèse');
         $mail = new PHPMailer;
         $mail->isSMTP();
         $mail->SMTPDebug = 0;
         $mail->Host = $config['mail']['server'];
-        $mail->Port = 587;
-        $mail->SMTPAuth = true;
+        if (isset($config['mail']['port'])) {
+            $mail->Port = $config['mail']['port'];
+        }
+        $mail->SMTPAuth = $config['mail'];
         $mail->CharSet = 'UTF-8';
         $mail->Username = $config['mail']['username'];
         $mail->Password = $config['mail']['password'];
