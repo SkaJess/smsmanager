@@ -90,13 +90,16 @@ if ($inputFile) {
     // Lit et affiche chaque ligne du fichier
     while (($data = fgetcsv($inputFile, 0, $config['csvSeparator'])) !== false) {
         if ($idLigne > $config['sourceFile']['ignoreFirstLines']) {
-            $rendezVous = new RendezVous();
-            $rendezVous->setDateAppointment($data[0]);      // Date du rendez-vous
-            $rendezVous->setTimeAppointment($data[1]);      // Heure du rendez-vous
-            $rendezVous->setPhoneNumber($data[2]);          // Numéro de téléphone
-            $rendezVous->setStructure($data[3]);            // Libellé de la structure
-            $rendezVous->setService($data[4]);              // Service            
-            $listeRendezVous->addRendezVous($rendezVous);
+            if (count($data) > 4) {
+                $rendezVous = new RendezVous();
+                $rendezVous->setDateAppointment($data[0]);      // Date du rendez-vous
+                $rendezVous->setTimeAppointment($data[1]);      // Heure du rendez-vous
+                $rendezVous->setPhoneNumber($data[2]);          // Numéro de téléphone
+                $rendezVous->setStructure($data[3]);            // Libellé de la structure
+                $rendezVous->setService($data[4]);              // Service        
+                var_dump($data);
+                $listeRendezVous->addRendezVous($rendezVous);
+            }
         }
         $idLigne++;
     }

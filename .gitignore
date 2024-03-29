@@ -3,3 +3,5 @@ sample/input/sample copy.csv
 sample/input/test_unitaire.csv
 sample/output/errors.csv
 sample/output/success.csv
+sample/input/rappelRdv48h.csv
+sample/output/rappelRdv48h-synthese.csv
