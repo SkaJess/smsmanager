@@ -112,20 +112,19 @@ if ($inputFile) {
     $manager->display(" > Nb d'anomalies identifiées: " . $listeRendezVous->getNbErreurs());
     $manager->display("");
     $manager->display("Génération du fichier de sortie");
-    $entete = array("Structure", "Numéro de Téléphone", "Nom Médecin", "Service", "Date Rendez Vous", "Heure Rendez Vous", "Numéro de téléphone formatté", "Nombre de Rendez vous", "Code Statut SMS", "Description Statut SMS", "ID SMS");
+    $entete = array("Date Rendez Vous", "Heure Rendez Vous", "Numéro de Téléphone", "Structure", "Service", "Numéro de téléphone formaté", "Nombre de Rendez vous", "Code Statut SMS", "Description Statut SMS", "ID SMS");
     fputcsv($outputSuccessFile, $entete, ";");
     foreach ($listeRendezVous->getListeRendezVous() as $rendezVous) {
         $ligne = array();
-        $ligne[] = $rendezVous->getStructure();
-        $ligne[] = $rendezVous->getPhoneNumber();
-        $ligne[] = $rendezVous->getDoctorName();
-        $ligne[] = $rendezVous->getService();
         if ($rendezVous->getDateAppointment()) {
             $ligne[] = $rendezVous->getDateAppointment()->format("Y-m-d");
         } else {
             $ligne[] = $rendezVous->getOriginalDateAppointment();
         }
         $ligne[] = $rendezVous->getTimeAppointment();
+        $ligne[] = $rendezVous->getPhoneNumber();
+        $ligne[] = $rendezVous->getStructure();
+        $ligne[] = $rendezVous->getService();
         $ligne[] = $rendezVous->getFormatedPhoneNumber();
         $ligne[] = $listeRendezVous->getNbRdvByPhoneNumber($rendezVous->getFormatedPhoneNumber());
         $ligne[] = $rendezVous->getSmsStatusCode();
