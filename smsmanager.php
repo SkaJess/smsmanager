@@ -97,7 +97,6 @@ if ($inputFile) {
                 $rendezVous->setPhoneNumber($data[2]);          // Numéro de téléphone
                 $rendezVous->setStructure($data[3]);            // Libellé de la structure
                 $rendezVous->setService($data[4]);              // Service        
-                var_dump($data);
                 $listeRendezVous->addRendezVous($rendezVous);
             }
         }
