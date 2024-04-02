@@ -54,8 +54,8 @@ class RendezVous
 
     public function setPhoneNumber($phoneNumber)
     {
-        $this->phoneNumber = $phoneNumber;
-        $this->setFormatedPhoneNumber($phoneNumber);
+        $this->phoneNumber = trim($phoneNumber);
+        $this->setFormatedPhoneNumber(trim($phoneNumber));
     }
 
     public function getDoctorName()
