@@ -1,3 +1,2 @@
-Ligne 1
-Ligne 2
-"Nom_Structure";"0601010101";"Docteur Dupont";"Service Anesthésie";"2025-02-03";12:00
+"Date RDV";"Heure Date RDV";"N° Téléphone Port. Patient";"Entité Juridique Acte";"Service RDV";"Libellé Acte";"Date/Heure Date RDV";"Nom Usage Patient";"Nom Naissance Patient";"Prénom Patient";"Date Naissance Patient";"Service RDV";"N° Téléphone Patient";"N° Téléphone Prof. Patient";"Acte RDV"
+"03/04/2024";"07:00";"0606080910";"CH du Sud";"IMAGERIE MEDICALE";"IRM_GENOU";"29/03/2024 - 07:00";"DUPONT";"DUPONT";"Jzan";"11/04/1974";"1560 - nh IMAGERIE MEDICALE";"";"";"WB_IRM_GENOU"
