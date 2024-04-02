@@ -1,5 +1,5 @@
 <?php
-require_once(dirname(__FILE__) . "/SMSInterface.php");
+require_once (dirname(__FILE__) . "/SMSInterface.php");
 class RendezVous
 {
 
@@ -77,7 +77,6 @@ class RendezVous
     {
         $this->service = $service;
     }
-
     public function getDateAppointment()
     {
         return $this->dateAppointment;

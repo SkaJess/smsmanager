@@ -1,7 +1,7 @@
 <?php
 
-require_once(dirname(__FILE__) . "/RendezVous.php");
-require_once(dirname(__FILE__) . "/SMSInterface.php");
+require_once (dirname(__FILE__) . "/RendezVous.php");
+require_once (dirname(__FILE__) . "/SMSInterface.php");
 class Campaign
 {
     private $listeRendezVous = array();
@@ -10,6 +10,7 @@ class Campaign
     private int $nbEnvois = 0;
     private int $nbErreurs = 0;
     private int $maxIntervalDate = 0;
+    private $maxSMSByPhoneNumber = 1;
     private DateTime $now;
 
     public function __construct()
@@ -36,7 +37,18 @@ class Campaign
     {
         return count($this->listeRendezVous);
     }
-
+    public function setMaxSMSByPhoneNumber(int $maxSMSByPhoneNumber)
+    {
+        if ($maxSMSByPhoneNumber > 0) {
+            $this->maxSMSByPhoneNumber = $maxSMSByPhoneNumber;
+        } else {
+            $this->maxSMSByPhoneNumber = 1;
+        }
+    }
+    public function getMaxSMSByPhoneNumber()
+    {
+        return $this->maxSMSByPhoneNumber;
+    }
     public function getNbRdvByPhoneNumber($number)
     {
         if (isset($this->nbRendezVous[$number]))
@@ -65,19 +77,26 @@ class Campaign
                 if ($rdv->isMobilePhone()) {
                     $request = $this->smsProvider->prepareSMS($rdv->preparationMessage(), $rdv->getFormatedPhoneNumber());
                     if ($manager->getMode() == ApplicationManager::MODE_PRODUCTION) {
-                        $response = $this->smsProvider->sendSMS();
-                        $manager->display(" > Envoi du SMS : PRODUCTION");
-                        $rdv->setSmsStatusCode($response->getCode());
-                        $rdv->setSmsstatusDescription($response->getDescription());
-                        $rdv->setSmsId($response->getSMSId());
-                        $manager->display(" > Code Réponse : " . $response->getCode());
-                        $manager->display(" > Description Réponse : " . $response->getDescription());
-                        $manager->display(" > ID SMS : " . $response->getSMSId());
-                        if ($rdv->getSmsStatusCode() == 0) {
-                            $manager->display(" > SMS Correctement envoyé ");
-                            $this->nbEnvois++;
+                        echo "Max " . $this->getMaxSMSByPhoneNumber();
+                        if ($this->getMaxSMSByPhoneNumber() >= $this->getNbRdvByPhoneNumber($rdv->getFormatedPhoneNumber())) {
+                            $response = $this->smsProvider->sendSMS();
+                            $manager->display(" > Envoi du SMS : PRODUCTION");
+                            $rdv->setSmsStatusCode($response->getCode());
+                            $rdv->setSmsstatusDescription($response->getDescription());
+                            $rdv->setSmsId($response->getSMSId());
+                            $manager->display(" > Code Réponse : " . $response->getCode());
+                            $manager->display(" > Description Réponse : " . $response->getDescription());
+                            $manager->display(" > ID SMS : " . $response->getSMSId());
+                            if ($rdv->getSmsStatusCode() == 0) {
+                                $manager->display(" > SMS Correctement envoyé ");
+                                $this->nbEnvois++;
+                            } else {
+                                $manager->display(" > Erreur lors de l'envoi du SMS ");
+                                $this->nbErreurs++;
+                                $listeAnomalies[] = $rdv;
+                            }
                         } else {
-                            $manager->display(" > Erreur lors de l'envoi du SMS ");
+                            $manager->display(" > Trop de SMS à envoyer pour ce numéro");
                             $this->nbErreurs++;
                             $listeAnomalies[] = $rdv;
                         }

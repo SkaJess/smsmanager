@@ -1,17 +1,16 @@
 <?php
 
-require_once('./vendor/autoload.php');
-require_once("./config/config.inc.php");
-require_once('./class/RendezVous.php');
-require_once('./class/Campaign.php');
-require_once('./class/ApplicationManager.php');
-require_once('./class/SMSMode.php');
+require_once ('./vendor/autoload.php');
+require_once ("./config/config.inc.php");
+require_once ('./class/RendezVous.php');
+require_once ('./class/Campaign.php');
+require_once ('./class/ApplicationManager.php');
+require_once ('./class/SMSMode.php');
 
 use PHPMailer\PHPMailer\PHPMailer;
 
 // Chargement de la configuration
 $manager = new ApplicationManager();
-$manager->display("");
 $manager->display("Chargement de la configuration");
 if ($config['verboseMode'] == true) {
     $manager->setVerbose(ApplicationManager::VERBOSE_ON);
@@ -19,6 +18,12 @@ if ($config['verboseMode'] == true) {
 } else {
     $manager->setVerbose(ApplicationManager::VERBOSE_OFF);
     $manager->display(" > Mode VERBOSE OFF : Le programme n affiche pas le détail des opérations");
+}
+
+if ($argc < 3) {
+    $manager->display(" > Nombre de paramètres incorrect");
+    $manager->display(" > Lancer la commande comme cela : /path/to/php <mode> <inputFile> <outputDirectory>");
+    die();
 }
 
 if ($config['debugMode'] == true) {
@@ -29,21 +34,10 @@ if ($config['debugMode'] == true) {
     $manager->display(" > Mode PRODUCTION : Les SMS seront envoyés");
 }
 
-// Prise en compte de l'argument si celui si est passé en paramétre
-if ($argv[1]) {
-    $sourceFile = $argv[1];
-} else {
-    $sourceFile = $config['sourceFile']['name'];
-}
+$sourceFile = $argv[1];
 $manager->setSourceFile($sourceFile);
 $manager->display(" > Fichier Source : " . $manager->getSourceFile());
-
-if ($argv[2]) {
-    $outputFile = $argv[2] . DIRECTORY_SEPARATOR . basename($manager->getSourceFile(), ".csv") . "-synthese.csv";
-} else {
-    $outputFile = $config['outputFile']['name'];
-}
-
+$outputFile = $argv[2] . DIRECTORY_SEPARATOR . basename($manager->getSourceFile(), ".csv") . "-synthese.csv";
 $manager->setOutputFile($outputFile);
 $manager->display(" > Fichier des envois SMS  : " . $manager->getOutputFile());
 $manager->display("");
@@ -80,7 +74,11 @@ $nbEnvois = 0;  // Nb d'Envois réalisés
 $nbErreurs = 0; // Nb d'erreurs détectées
 $compteurRdv = array();
 $listeRendezVous = new Campaign();
-$listeRendezVous->setMaxIntervalDate($config['sourceFile']['maxIntervalDate']);
+$listeRendezVous->setMaxIntervalDate($config['maxIntervalDate']);
+$manager->display(" > Intervalle maximum par rapport à la date du jour : " . $listeRendezVous->getMaxIntervalDate());
+$listeRendezVous->setMaxSMSByPhoneNumber($config['maxSMSByPhoneNumber']);
+$manager->display(" > Nombre Maximum de SMS par numéro de téléphone : " . $listeRendezVous->getMaxSMSByPhoneNumber());
+
 $smsProvider = new SMSMode($config['smsTrace']);
 $smsProvider->setApiToken($config['smsMode']['apiToken']);
 $listeRendezVous->setSMSProvider($smsProvider);
@@ -89,7 +87,7 @@ $idLigne = 1;
 if ($inputFile) {
     // Lit et affiche chaque ligne du fichier
     while (($data = fgetcsv($inputFile, 0, $config['csvSeparator'])) !== false) {
-        if ($idLigne > $config['sourceFile']['ignoreFirstLines']) {
+        if ($idLigne > $config['ignoreFirstLines']) {
             if (count($data) > 4) {
                 $rendezVous = new RendezVous();
                 $rendezVous->setDateAppointment($data[0]);      // Date du rendez-vous

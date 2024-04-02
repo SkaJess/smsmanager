@@ -1,8 +1,8 @@
 <?php
     // Renommer le fichier en config.inc.php et ajuster les variables nécessaires.
-    $config['sourceFile']['name'] = './sample/input/sample.csv';   // Fichier source comprenant la liste des informations sous format CSV
-    $config['sourceFile']['ignoreFirstLines'] = 0;  // Indique le nombre de lignes qui seront ignorées, Exemple : Si égal à 1, la première ligne est ignorée
-    $config['sourceFile']['maxIntervalDate'] = 7;  // Si différent à 0, indique le nombre de jours max de différences avec la date du jour. Si c'est supérieur, le SMS n'est pas envoyé
+    $config['ignoreFirstLines'] = 0;  // Indique le nombre de lignes qui seront ignorées, Exemple : Si égal à 1, la première ligne est ignorée
+    $config['maxIntervalDate'] = 7;  // Si différent à 0, indique le nombre de jours max de différences avec la date du jour. Si c'est supérieur, le SMS n'est pas envoyé
+    $config['maxSMSByPhoneNumber'] = 3; // Indique le nombre de SMS pour un numéro Donné dans une campagne. Si la valeur est dépassée, alors aucun SMS ne sera envoyé au numéro concerné
     $config['outputFile']['name'] = './sample/output/output.csv'; // Dossier de sortie des résultats
     $config['csvSeparator'] = ";";   // Défini le séparateur de Champ
     $config['debugMode'] = false;   // Si true, les SMS ne seront pas envoyés.
