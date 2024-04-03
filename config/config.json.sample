@@ -1,5 +1,12 @@
 {
   "sourceFile": "",                   // Indique le nom du fichier à traiter
+  "mappingField": {                   // Mappage des zones du fichier source 
+    "dateAppointment": "0",
+    "timeAppointment": "1",
+    "phoneNumber": "2",
+    "structure": "3",
+    "service": "4"
+  },
   "csvSeparator": "",                 // Champ séparateur CSV
   "ignoreFirstLines": "",             // Indique le nombre de lignes qui seront ignorées, Exemple : Si égal à 1, la première ligne est ignorée
   "maxIntervalDate": "",              // Si différent à 0, indique le nombre de jours max de différences avec la date du jour. Si c'est supérieur, le SMS n'est pas envoyé

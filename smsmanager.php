@@ -116,11 +116,11 @@ if ($inputFile) {
         if ($idLigne > $configJson['ignoreFirstLines']) {
             if (count($data) > 4) {
                 $rendezVous = new RendezVous();
-                $rendezVous->setDateAppointment($data[0]);      // Date du rendez-vous
-                $rendezVous->setTimeAppointment($data[1]);      // Heure du rendez-vous
-                $rendezVous->setPhoneNumber($data[2]);          // Numéro de téléphone
-                $rendezVous->setStructure($data[3]);            // Libellé de la structure
-                $rendezVous->setService($data[4]);              // Service        
+                $rendezVous->setDateAppointment($data[$configJson["mappingField"]["dateAppointment"]]);      // Date du rendez-vous
+                $rendezVous->setTimeAppointment($data[$configJson["mappingField"]["timeAppointment"]]);      // Heure du rendez-vous
+                $rendezVous->setPhoneNumber($data[$configJson["mappingField"]["phoneNumber"]]);          // Numéro de téléphone
+                $rendezVous->setStructure($data[$configJson["mappingField"]["structure"]]);            // Libellé de la structure
+                $rendezVous->setService($data[$configJson["mappingField"]["service"]]);              // Service        
                 $listeRendezVous->addRendezVous($rendezVous);
             }
         }
