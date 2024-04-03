@@ -77,7 +77,6 @@ class Campaign
                 if ($rdv->isMobilePhone()) {
                     $request = $this->smsProvider->prepareSMS($rdv->preparationMessage(), $rdv->getFormatedPhoneNumber());
                     if ($manager->getMode() == ApplicationManager::MODE_PRODUCTION) {
-                        echo "Max " . $this->getMaxSMSByPhoneNumber();
                         if ($this->getMaxSMSByPhoneNumber() >= $this->getNbRdvByPhoneNumber($rdv->getFormatedPhoneNumber())) {
                             $response = $this->smsProvider->sendSMS();
                             $manager->display(" > Envoi du SMS : PRODUCTION");

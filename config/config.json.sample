@@ -1,0 +1,24 @@
+{
+  "sourceFile": "",                   // Indique le nom du fichier à traiter
+  "csvSeparator": "",                 // Champ séparateur CSV
+  "ignoreFirstLines": "",             // Indique le nombre de lignes qui seront ignorées, Exemple : Si égal à 1, la première ligne est ignorée
+  "maxIntervalDate": "",              // Si différent à 0, indique le nombre de jours max de différences avec la date du jour. Si c'est supérieur, le SMS n'est pas envoyé
+  "maxSMSByPhoneNumber": "",          // Indique le nombre de SMS pour un numéro Donné dans une campagne. Si la valeur est dépassée, alors aucun SMS ne sera envoyé au numéro concerné
+  "outputDirectory": "",              // Dossier de sortie doù sera stocké le fichier de synthèse
+  "debugMode": true,                  // Si true, les SMS ne seront pas envoyés.
+  "smsTrace": true,                   // Si true, l'envoi des SMS sera détaillé par le provider.
+  "verboseMode": true,                // Si true, affiche à l'écran le détail des opérations.
+  "smsMode": {
+    "apiToken": "123435Sample"        // Clé API Utilisé par le provider SMSMode
+  },
+  "messageTemplate" : "Bonjour, nous vous rappelons votre RDV le #DATERDV-DMY#  à #HEURERDV#  au #STRUCTURE - #SERVICE#",  // Défini le modèle de message envoyé par SMS
+  "mail": {
+    "sendReport": true,               // Si true, le programme envoie le rapport par mail
+    "SMTPAuth": yes,                  // Indique si le programme doit utiliser l'authentification SMTP
+    "port": 587,                      // Indique le port utilisé pour l'envoi du mail
+    "server": "mail.myServer.fr",     // Adresse du serveur de messagerie
+    "username": "username",           // Login utilisé pour l'authenfication SMTP si activé
+    "password": "password",           // Password utilisé pour l'authenfication SMTP si Utilisé
+    "to": "destinataire"              // Destinataire du rapport
+  }
+}

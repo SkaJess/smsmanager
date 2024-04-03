@@ -10,7 +10,8 @@ class ApplicationManager
     private $mode; // Indique le mode de fonctionnement de l'application
     private $sourceFile; // Indique le fichier source à traiter
     private $outputFile; // Indique le fichier de sortie ou seront enregistrés les données avec le statut des envois.
-    private $verbose; // Si true, alors le programme affiche des informations sur le traitement.
+    private $jsonConfigFile; // Fichier de configuration JSON
+    private $verbose = true; // Si true, alors le programme affiche des informations sur le traitement.
 
     public function __construct()
     {
@@ -69,6 +70,21 @@ class ApplicationManager
     public function setOutputFile($outputFile): self
     {
         $this->outputFile = $outputFile;
+
+        return $this;
+    }
+
+    public function getJsonConfigFile()
+    {
+        return $this->jsonConfigFile;
+    }
+
+    /**
+     * Set the value of JsonConfigFile
+     */
+    public function setJsonConfigFile($jsonConfigFile): self
+    {
+        $this->jsonConfigFile = $jsonConfigFile;
 
         return $this;
     }

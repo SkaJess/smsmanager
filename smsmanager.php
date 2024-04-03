@@ -1,7 +1,6 @@
 <?php
 
 require_once ('./vendor/autoload.php');
-require_once ("./config/config.inc.php");
 require_once ('./class/RendezVous.php');
 require_once ('./class/Campaign.php');
 require_once ('./class/ApplicationManager.php');
@@ -11,22 +10,62 @@ use PHPMailer\PHPMailer\PHPMailer;
 
 // Chargement de la configuration
 $manager = new ApplicationManager();
-$manager->display("Chargement de la configuration");
-if ($config['verboseMode'] == true) {
-    $manager->setVerbose(ApplicationManager::VERBOSE_ON);
-    $manager->display(' > Mode VERBOSE : Le programme affiche le détail des opérations effectuées');
-} else {
-    $manager->setVerbose(ApplicationManager::VERBOSE_OFF);
-    $manager->display(" > Mode VERBOSE OFF : Le programme n affiche pas le détail des opérations");
-}
 
-if ($argc < 3) {
+if ($argc > 2) {
     $manager->display(" > Nombre de paramètres incorrect");
-    $manager->display(" > Lancer la commande comme cela : /path/to/php <mode> <inputFile> <outputDirectory>");
+    $manager->display(" > Lancer la commande comme cela : /path/to/php <optional:path/to/file/config.json> ");
+    $manager->display(" > Si aucune parametre est fourni, le programme va recherche le fichier config.json dans le dossier /config");
+    $manager->display(" > Utiliez le fichier config.json.sample comme exemple pour créer votre propre fichier config.json");
+
     die();
 }
+// Chargement du fichier JSON
+if ($argc == 2) {
+    // Le nom du fichier a été fourni en parametre
+    $manager->setJsonConfigFile($argv[1]);
+} else {
+    // On prend le fichier par défaut qui doit se trouver dans le dossier config.
+    $manager->setJsonConfigFile("./config/config.json");
+}
+$manager->display(" > Fichier Configuration JSON : " . $manager->getJsonConfigFile());
 
-if ($config['debugMode'] == true) {
+// Vérification de l'existence du fichier
+if (file_exists($manager->getJsonConfigFile())) {
+    $manager->display(" > Chargement de la configuration du fichier JSON");
+    // Chargement du contenu du fichier
+    $contenuJson = file_get_contents($manager->getJsonConfigFile());
+    // Décodage du JSON en array PHP
+    $configJson = json_decode($contenuJson, true);
+    // Vérification de la réussite du décodage
+    if ($configJson === null) {
+        $manager->display("Erreur lors de la lecture du JSON '" . $manager->getJsonConfigFile() . "'");
+        die();
+    } else {
+        if ($configJson['verboseMode'] == true) {
+            $manager->setVerbose(ApplicationManager::VERBOSE_ON);
+            $manager->display('   + Mode VERBOSE : Le programme affiche le détail des opérations effectuées');
+        } else {
+            $manager->setVerbose(ApplicationManager::VERBOSE_OFF);
+            $manager->display("   + Mode VERBOSE OFF : Le programme n affiche pas le détail des opérations");
+        }
+        $manager->setSourceFile($configJson['sourceFile']);
+        $manager->display("   + Fichier Source : " . $manager->getSourceFile());
+        $outputFile = $configJson["outputDirectory"] . DIRECTORY_SEPARATOR . basename($manager->getSourceFile(), ".csv") . "-synthese.csv";
+        $manager->setOutputFile($outputFile);
+        $manager->display("   + Fichier de synthèse des envois SMS  : " . $manager->getOutputFile());
+        $manager->display("   + Champ Séparateur CSV : '" . $configJson["csvSeparator"] . "'");
+        $manager->display("   + Nombre de lignes à ignorer : " . $configJson["ignoreFirstLines"]);
+        $manager->display("   + Ecart maximal par rapport à la date du jour  : " . $configJson["maxIntervalDate"]);
+        $manager->display("   + Limite SMS par numéro de téléphone. Si dépassé, il n'y aura pas d'envoi SMS au numéro concerné : " . $configJson["maxSMSByPhoneNumber"]);
+        $manager->display("   + Affichage de la trace des envois de SMS par le fournisseur  : " . ($configJson["smsTrace"] == 1 ? "Oui" : "Non"));
+        $smsProvider = new SMSMode($configJson['smsTrace']);
+        $smsProvider->setApiToken($configJson['smsMode']['apiToken']);
+    }
+} else {
+    $manager->display("Fichier de configuration JSON '" . $manager->getJsonConfigFile() . "' non trouvé.");
+    die();
+}
+if ($configJson['debugMode'] == true) {
     $manager->setMode(ApplicationManager::MODE_DEBUG);
     $manager->display(' > Mode DEBUG : Les SMS ne seront pas envoyés');
 } else {
@@ -34,14 +73,7 @@ if ($config['debugMode'] == true) {
     $manager->display(" > Mode PRODUCTION : Les SMS seront envoyés");
 }
 
-$sourceFile = $argv[1];
-$manager->setSourceFile($sourceFile);
-$manager->display(" > Fichier Source : " . $manager->getSourceFile());
-$outputFile = $argv[2] . DIRECTORY_SEPARATOR . basename($manager->getSourceFile(), ".csv") . "-synthese.csv";
-$manager->setOutputFile($outputFile);
-$manager->display(" > Fichier des envois SMS  : " . $manager->getOutputFile());
-$manager->display("");
-$manager->display("Vérification de la configuration");
+$manager->display(" > Vérification de la configuration");
 $statusInputFile = false;
 $statusOutputFile = false;
 if (file_exists($manager->getSourceFile())) {
@@ -56,7 +88,6 @@ if ($statusInputFile == true) {
     $manager->display(" > Ouverture du fichier source : ECHEC ");
     throw new \Exception("Fichier source introuvable ou droits d'accès insuffisants :" . $manager->getSourceFile());
 }
-
 $outputSuccessFile = fopen($manager->getOutputFile(), 'w');
 if ($outputSuccessFile) {
     fprintf($outputSuccessFile, chr(0xEF) . chr(0xBB) . chr(0xBF)); // Pour encodage UTF8
@@ -74,20 +105,15 @@ $nbEnvois = 0;  // Nb d'Envois réalisés
 $nbErreurs = 0; // Nb d'erreurs détectées
 $compteurRdv = array();
 $listeRendezVous = new Campaign();
-$listeRendezVous->setMaxIntervalDate($config['maxIntervalDate']);
-$manager->display(" > Intervalle maximum par rapport à la date du jour : " . $listeRendezVous->getMaxIntervalDate());
-$listeRendezVous->setMaxSMSByPhoneNumber($config['maxSMSByPhoneNumber']);
-$manager->display(" > Nombre Maximum de SMS par numéro de téléphone : " . $listeRendezVous->getMaxSMSByPhoneNumber());
-
-$smsProvider = new SMSMode($config['smsTrace']);
-$smsProvider->setApiToken($config['smsMode']['apiToken']);
+$listeRendezVous->setMaxIntervalDate($configJson['maxIntervalDate']);
+$listeRendezVous->setMaxSMSByPhoneNumber($configJson['maxSMSByPhoneNumber']);
 $listeRendezVous->setSMSProvider($smsProvider);
 $idLigne = 1;
 // Vérification de l'ouverture du fichier
 if ($inputFile) {
     // Lit et affiche chaque ligne du fichier
-    while (($data = fgetcsv($inputFile, 0, $config['csvSeparator'])) !== false) {
-        if ($idLigne > $config['ignoreFirstLines']) {
+    while (($data = fgetcsv($inputFile, 0, $configJson['csvSeparator'])) !== false) {
+        if ($idLigne > $configJson['ignoreFirstLines']) {
             if (count($data) > 4) {
                 $rendezVous = new RendezVous();
                 $rendezVous->setDateAppointment($data[0]);      // Date du rendez-vous
@@ -135,24 +161,22 @@ if ($inputFile) {
     fclose($outputSuccessFile);
 
     // Envoi du mail de synthèse
-    if (($config['mail']['sendReport'] == true)) {
-
-
-        $manager->display('Envoi du mail du rapport de synthèse');
+    if (($configJson['mail']['sendReport'] == true)) {
+        $manager->display('> Envoi du mail du rapport de synthèse');
         $mail = new PHPMailer;
         $mail->isSMTP();
         $mail->SMTPDebug = 0;
-        $mail->Host = $config['mail']['server'];
-        if (isset($config['mail']['port'])) {
-            $mail->Port = $config['mail']['port'];
+        $mail->Host = $configJson['mail']['server'];
+        if (isset($configJson['mail']['port'])) {
+            $mail->Port = $configJson['mail']['port'];
         }
-        $mail->SMTPAuth = $config['mail']['SMTPAuth'];
+        $mail->SMTPAuth = $configJson['mail']['SMTPAuth'];
         $mail->CharSet = 'UTF-8';
-        $mail->Username = $config['mail']['username'];
-        $mail->Password = $config['mail']['password'];
-        $mail->setFrom($config['mail']['username'], 'smsmanager');
-        $mail->addReplyTo($config['mail']['username'], 'smsmanager');
-        $mail->addAddress($config['mail']['to'], '');
+        $mail->Username = $configJson['mail']['username'];
+        $mail->Password = $configJson['mail']['password'];
+        $mail->setFrom($configJson['mail']['username'], 'smsmanager');
+        $mail->addReplyTo($configJson['mail']['username'], 'smsmanager');
+        $mail->addAddress($configJson['mail']['to'], '');
         $mail->isHTML(true);
         $mail->Subject = '[SMS Mode] Synthèse des envois de confirmation de rendez-vous par SMS';
         $mail->Body = 'Nombre de rendez-vous  : ' . $listeRendezVous->NumberOfRendezVous() . "<br/>Nb de SMS de rappels de rendez-vous envoyés : " . $listeRendezVous->getNbEnvois() . "<br/>Nb d'anomalies identifiées : " . $listeRendezVous->getNbErreurs();
