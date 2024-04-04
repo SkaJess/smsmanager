@@ -114,7 +114,7 @@ if ($inputFile) {
     // Lit et affiche chaque ligne du fichier
     while (($data = fgetcsv($inputFile, 0, $configJson['csvSeparator'])) !== false) {
         if ($idLigne > $configJson['ignoreFirstLines']) {
-            if (count($data) > 4) {
+            if (count($data) > 4 && strlen(trim($data[0])) > 1 ) {
                 $rendezVous = new RendezVous();
                 $rendezVous->setDateAppointment($data[$configJson["mappingField"]["dateAppointment"]]);      // Date du rendez-vous
                 $rendezVous->setTimeAppointment($data[$configJson["mappingField"]["timeAppointment"]]);      // Heure du rendez-vous
