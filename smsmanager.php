@@ -11,18 +11,18 @@ use PHPMailer\PHPMailer\PHPMailer;
 // Chargement de la configuration
 $manager = new ApplicationManager();
 
-if ($argc > 2) {
+if ($argc > 3) {
     $manager->display(" > Nombre de paramètres incorrect");
-    $manager->display(" > Lancer la commande comme cela : /path/to/php <optional:path/to/file/config.json> ");
+    $manager->display(" > Lancer la commande comme cela : /path/to/php <inputfile> <optional:path/to/file/config.json> ");
     $manager->display(" > Si aucune parametre est fourni, le programme va recherche le fichier config.json dans le dossier /config");
     $manager->display(" > Utiliez le fichier config.json.sample comme exemple pour créer votre propre fichier config.json");
 
     die();
 }
 // Chargement du fichier JSON
-if ($argc == 2) {
+if ($argc == 3) {
     // Le nom du fichier a été fourni en parametre
-    $manager->setJsonConfigFile($argv[1]);
+    $manager->setJsonConfigFile($argv[2]);
 } else {
     // On prend le fichier par défaut qui doit se trouver dans le dossier config.
     $manager->setJsonConfigFile("./config/config.json");
@@ -48,7 +48,7 @@ if (file_exists($manager->getJsonConfigFile())) {
             $manager->setVerbose(ApplicationManager::VERBOSE_OFF);
             $manager->display("   + Mode VERBOSE OFF : Le programme n affiche pas le détail des opérations");
         }
-        $manager->setSourceFile($configJson['sourceFile']);
+        $manager->setSourceFile($argv[1]);
         $manager->display("   + Fichier Source : " . $manager->getSourceFile());
         $outputFile = $configJson["outputDirectory"] . DIRECTORY_SEPARATOR . basename($manager->getSourceFile(), ".csv") . "-synthese.csv";
         $manager->setOutputFile($outputFile);
