@@ -10,6 +10,9 @@ Fonctionnalités
 Comment ça marche ?
 
 Le programme fonctionne avec un fichier de configuration au format JSON. Un exemple est fourni dans le dossier ./config
+
+Pour utiliser le programme, il suffit de lancer la commande suivante : /path/to/php/php /path/config.json 
+
 Ce fiohier JSON contient l'ensemble des informations pour permettre le traitement d'un fichier CSV.
 Il va définir, le nom du fichier source, le délimiteur CSV, le nom de lignes à ignorer (notamment pour ne pas traiter les entetes de fichiers), la limite du nombre de SMS par numéro de téléphone (si cette limite est atteinte, cela neutralisera l'envoi de SMS au numéro concerné afin d'éviter l'envoi massif de SMS vers un numéro de téléphone), le nombre de jours maximum par rapport à la date du jour (il n'enverra pas de SMS si la date du rendez vous est trop éloignée)
 
