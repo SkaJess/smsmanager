@@ -178,12 +178,17 @@ if ($inputFile) {
         $mail->addReplyTo($configJson['mail']['username'], 'smsmanager');
         $mail->addAddress($configJson['mail']['to'], '');
         $mail->isHTML(true);
-        if ($listeRendezVous->NumberOfRendezVous() == $listeRendezVous->getNbEnvois()) {
-            $campaignStatus = "SUCCES";
-        } elseif ($listeRendezVous->getNbEnvois() > 0) {
-            $campaignStatus = "PARTIEL";
-        } else {
-            $campaignStatus = "ECHEC";
+        if ($listeRendezVous->NumberOfRendezVous() > 0) {
+            if ($listeRendezVous->NumberOfRendezVous() == $listeRendezVous->getNbEnvois()) {
+                $campaignStatus = "SUCCES";
+            } elseif ($listeRendezVous->getNbEnvois() > 0) {
+                $campaignStatus = "PARTIEL";
+            } else {
+                $campaignStatus = "ECHEC";
+            }
+        }
+        else {
+              $campaignStatus = "AUCUN RDV";
         }
         $mail->Subject = '[Rapport SMS - ' . $campaignStatus . '] Synthèse des envois de confirmation de rendez-vous par SMS';
         $mail->Body = 'Nombre de rendez-vous  : ' . $listeRendezVous->NumberOfRendezVous() . "<br/>Nb de SMS de rappels de rendez-vous envoyés : " . $listeRendezVous->getNbEnvois() . "<br/>Nb d'anomalies identifiées : " . $listeRendezVous->getNbErreurs();
