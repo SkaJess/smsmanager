@@ -178,7 +178,14 @@ if ($inputFile) {
         $mail->addReplyTo($configJson['mail']['username'], 'smsmanager');
         $mail->addAddress($configJson['mail']['to'], '');
         $mail->isHTML(true);
-        $mail->Subject = '[SMS Mode] Synthèse des envois de confirmation de rendez-vous par SMS';
+        if ($listeRendezVous->NumberOfRendezVous() == $listeRendezVous->getNbEnvois()) {
+            $campaignStatus = "SUCCES";
+        } elseif ($listeRendezVous->getNbEnvois() > 0) {
+            $campaignStatus = "PARTIEL";
+        } else {
+            $campaignStatus = "ECHEC";
+        }
+        $mail->Subject = '[Rapport SMS - ' . $campaignStatus . '] Synthèse des envois de confirmation de rendez-vous par SMS';
         $mail->Body = 'Nombre de rendez-vous  : ' . $listeRendezVous->NumberOfRendezVous() . "<br/>Nb de SMS de rappels de rendez-vous envoyés : " . $listeRendezVous->getNbEnvois() . "<br/>Nb d'anomalies identifiées : " . $listeRendezVous->getNbErreurs();
         $mail->addAttachment($manager->getOutputFile());
         if (!$mail->send()) {
