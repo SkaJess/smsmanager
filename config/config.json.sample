@@ -1,5 +1,4 @@
 {
-  "sourceFile": "",                   // Indique le nom du fichier à traiter
   "mappingField": {                   // Mappage des zones du fichier source 
     "dateAppointment": "0",
     "timeAppointment": "1",
