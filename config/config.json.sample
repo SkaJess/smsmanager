@@ -20,7 +20,7 @@
   "messageTemplate" : "Bonjour, nous vous rappelons votre RDV le #DATERDV-DMY#  à #HEURERDV#  au #STRUCTURE - #SERVICE#",  // Défini le modèle de message envoyé par SMS
   "mail": {
     "sendReport": true,               // Si true, le programme envoie le rapport par mail
-    "SMTPAuth": yes,                  // Indique si le programme doit utiliser l'authentification SMTP
+    "SMTPAuth": true,                  // Indique si le programme doit utiliser l'authentification SMTP
     "port": 587,                      // Indique le port utilisé pour l'envoi du mail
     "server": "mail.myServer.fr",     // Adresse du serveur de messagerie
     "username": "username",           // Login utilisé pour l'authenfication SMTP si activé
