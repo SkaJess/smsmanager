@@ -190,7 +190,12 @@ if ($inputFile) {
         else {
               $campaignStatus = "AUCUN RDV";
         }
-        $mail->Subject = '[Rapport SMS - ' . $campaignStatus . '] Synthèse des envois de confirmation de rendez-vous par SMS';
+        if ($manager->getMode() == ApplicationManager::MODE_DEBUG) {
+			$prefix = " SIMULATION ";
+		} else {
+			$prefix = "";
+		}
+        $mail->Subject = '['.$prefix.'Rapport SMS - ' . $campaignStatus . '] Synthèse des envois de confirmation de rendez-vous par SMS';
         $mail->Body = 'Nombre de rendez-vous  : ' . $listeRendezVous->NumberOfRendezVous() . "<br/>Nb de SMS de rappels de rendez-vous envoyés : " . $listeRendezVous->getNbEnvois() . "<br/>Nb d'anomalies identifiées : " . $listeRendezVous->getNbErreurs();
         $mail->addAttachment($manager->getOutputFile());
         if (!$mail->send()) {
