@@ -20,7 +20,9 @@ class RendezVous
 
     public function __construct($phoneNumber = null, $doctorName = null, $service = null, $dateAppointment = null, $timeAppointment = null)
     {
-        $this->setPhoneNumber($phoneNumber);
+        if ($phoneNumber <> null) {
+            $this->setPhoneNumber($phoneNumber);
+        }
         $this->doctorName = $doctorName;
         $this->service = $service;
         $this->dateAppointment = $dateAppointment;
@@ -148,7 +150,7 @@ class RendezVous
 
     public function isMobilePhone()
     {
-        $numeroSansSeparateurs = preg_replace('/[-.\/]/', '', $this->getPhoneNumber());
+        $numeroSansSeparateurs = preg_replace('/[-. \/]/', '', $this->getPhoneNumber());
 
         // Expression régulière pour un numéro de téléphone portable français
         $pattern = "/^(0|\\+33|0033|33)[67]([0-9]{8})$/";

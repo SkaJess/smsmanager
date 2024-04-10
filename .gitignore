@@ -6,3 +6,6 @@ sample/output/success.csv
 sample/input/rappelRdv48h.csv
 sample/output/rappelRdv48h-synthese.csv
 config/config.json
+sample/input/test.csv
+sample/input/SIMULATION_rappelRdv48h_GYNECO_TOUS_2024-04-09/SIMULATION_rappelRdv48h_GYNECO_.csv
+sample/input/SIMULATION_rappelRdv48h_GYNECO_TOUS_2024-04-09.zip
