@@ -10,6 +10,7 @@ class ApplicationManager
     private $mode; // Indique le mode de fonctionnement de l'application
     private $sourceFile; // Indique le fichier source à traiter
     private $outputFile; // Indique le fichier de sortie ou seront enregistrés les données avec le statut des envois.
+    private $summaryFile; // Indique le fichier de sortie ou seront enregistrés la synthese  de chaque lot d'envoi.
     private $jsonConfigFile; // Fichier de configuration JSON
     private $verbose = true; // Si true, alors le programme affiche des informations sur le traitement.
 
@@ -56,6 +57,7 @@ class ApplicationManager
         return $this;
     }
 
+
     /**
      * Get the value of OutputFile
      */
@@ -73,6 +75,23 @@ class ApplicationManager
 
         return $this;
     }
+/**
+     * Get the value of SummaryFile
+     */
+    public function getSummaryFile()
+    {
+        return $this->summaryFile;
+    }
+
+    /**
+     * Set the value of SummaryFile
+     */
+    public function setSummaryFile($summaryFile): self
+    {
+        $this->summaryFile = $summaryFile;
+        return $this;
+    }
+
 
     public function getJsonConfigFile()
     {

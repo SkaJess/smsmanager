@@ -12,6 +12,7 @@ class RendezVous
     private $timeAppointment;
     private $message;
     private $structure;
+    private $toSend = false;
 
     private $smsId;
     private $smsStatusCode;
@@ -48,6 +49,17 @@ class RendezVous
     {
         $this->structure = $structure;
     }
+
+    public function setToSend($isToSend)
+    {
+        return $this->toSend = $isToSend;
+    }
+
+    public function isToSend()
+    {
+        return $this->toSend;
+    }
+
 
     public function getPhoneNumber()
     {

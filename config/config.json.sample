@@ -1,11 +1,15 @@
 {
+  "campaignID" : "RAPPEL_RDV",          // Identifiant de Campagne.
   "mappingField": {                   // Mappage des zones du fichier source 
     "dateAppointment": "0",
     "timeAppointment": "1",
     "phoneNumber": "2",
     "structure": "3",
-    "service": "4"
+    "service": "4",
+    "sendMessage" : "5",
   },
+  "sendMode" : "FILTERED",                    // indique le mode de traitement du fichier (ALL : On envoie un SMS à tous les destinataires / FILTERED : On envoie à tous les destinataires ayant la valeur 'sendValue')
+  "sendValue" : "Oui",
   "csvSeparator": "",                 // Champ séparateur CSV
   "ignoreFirstLines": "",             // Indique le nombre de lignes qui seront ignorées, Exemple : Si égal à 1, la première ligne est ignorée
   "maxIntervalDate": "",              // Si différent à 0, indique le nombre de jours max de différences avec la date du jour. Si c'est supérieur, le SMS n'est pas envoyé
@@ -17,6 +21,8 @@
   "smsMode": {
     "apiToken": "123435Sample"        // Clé API Utilisé par le provider SMSMode
   },
+  "messageTemplate": "Bonjour #DESTINATAIRE#",
+  "summaryFile" : true,               // Si true, ecrit les données statisques dans le fichier de synthèse (summary.csv) dans outputDirectory
   "mail": {
     "sendReport": true,               // Si true, le programme envoie le rapport par mail
     "SMTPAuth": true,                  // Indique si le programme doit utiliser l'authentification SMTP

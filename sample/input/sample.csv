@@ -1,2 +1,4 @@
-"Date RDV";"Heure Date RDV";"N° Téléphone Port. Patient";"Entité Juridique Acte";"Service RDV";"Libellé Acte";"Date/Heure Date RDV";"Nom Usage Patient";"Nom Naissance Patient";"Prénom Patient";"Date Naissance Patient";"Service RDV";"N° Téléphone Patient";"N° Téléphone Prof. Patient";"Acte RDV"
-"03/04/2024";"07:00";"0606080910";"CH du Sud";"IMAGERIE MEDICALE";"IRM_GENOU";"29/03/2024 - 07:00";"DUPONT";"DUPONT";"Jzan";"11/04/1974";"1560 - nh IMAGERIE MEDICALE";"";"";"WB_IRM_GENOU"
+"Date RDV";"Heure Date RDV";"N° Téléphone Port. Patient";"Entité Juridique Acte";"Service RDV";"EnvoiSMS"
+"03/04/2024";"07:00";"0682140675";"CH du Sud";"IMAGERIE MEDICALE";"Oui"
+"03/04/2024";"07:00";"0682140675";"CH du Sud";"IMAGERIE MEDICALE";"Non"
+"03/04/2024";"07:00";"0682140675";"CH du Sud";"IMAGERIE MEDICALE";"Oui"

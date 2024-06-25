@@ -12,11 +12,33 @@ class Campaign
     private int $maxIntervalDate = 0;
     private $maxSMSByPhoneNumber = 1;
     private DateTime $now;
+    private $campaignID; // Indique l'identifiant de la campagne de SMS 
+
 
     public function __construct()
     {
         $this->now = new DateTime();
     }
+
+
+    /**
+     * Get the value of campaignID
+     */
+    public function getCampaignID()
+    {
+        return $this->campaignID;
+    }
+
+    /**
+     * Set the value of campaignID
+     */
+
+    public function setCampaignID($campaignID): self
+    {
+        $this->campaignID = $campaignID;
+        return $this;
+    }
+
 
     public function addRendezVous(RendezVous $rdv)
     {

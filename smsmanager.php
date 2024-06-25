@@ -52,7 +52,10 @@ if (file_exists($manager->getJsonConfigFile())) {
         $manager->display("   + Fichier Source : " . $manager->getSourceFile());
         $outputFile = $configJson["outputDirectory"] . DIRECTORY_SEPARATOR . basename($manager->getSourceFile(), ".csv") . "-synthese.csv";
         $manager->setOutputFile($outputFile);
-        $manager->display("   + Fichier de synthèse des envois SMS  : " . $manager->getOutputFile());
+        $summaryFile = $configJson["outputDirectory"] . DIRECTORY_SEPARATOR . "summary.csv";
+        $manager->setSummaryFile($summaryFile);
+        $manager->display("   + Fichier détaillé de synthèse des envois SMS  : " . $manager->getOutputFile());
+        $manager->display("   + Fichier de synthèse des envois SMS  : " . $manager->getSummaryFile());
         $manager->display("   + Champ Séparateur CSV : '" . $configJson["csvSeparator"] . "'");
         $manager->display("   + Nombre de lignes à ignorer : " . $configJson["ignoreFirstLines"]);
         $manager->display("   + Ecart maximal par rapport à la date du jour  : " . $configJson["maxIntervalDate"]);
@@ -100,11 +103,24 @@ if ($statusOutputFile == true) {
     $manager->display(" > Ouverture du fichier des envois SMS : ECHEC ");
 }
 
+$outputSummaryFile = fopen($manager->getSummaryFile(), 'a');
+if ($outputSummaryFile) {
+    $statusSummaryFile = true;
+}
+
+
+if ($statusSummaryFile == true) {
+    $manager->display(" > Ouverture du fichier de Synthèse Historique : OK");
+} else {
+    $manager->display(" > Ouverture du fichier de Synthèse Historique : ECHEC ");
+}
+
 $listeAnomalies = array(); // Liste des Rendez Vous en erreur
 $nbEnvois = 0;  // Nb d'Envois réalisés
 $nbErreurs = 0; // Nb d'erreurs détectées
 $compteurRdv = array();
 $listeRendezVous = new Campaign();
+$listeRendezVous->setCampaignID($configJson['campaignID']);
 $listeRendezVous->setMaxIntervalDate($configJson['maxIntervalDate']);
 $listeRendezVous->setMaxSMSByPhoneNumber($configJson['maxSMSByPhoneNumber']);
 $listeRendezVous->setSMSProvider($smsProvider);
@@ -118,9 +134,11 @@ if ($inputFile) {
                 $rendezVous = new RendezVous();
                 $rendezVous->setDateAppointment($data[$configJson["mappingField"]["dateAppointment"]]);      // Date du rendez-vous
                 $rendezVous->setTimeAppointment($data[$configJson["mappingField"]["timeAppointment"]]);      // Heure du rendez-vous
-                $rendezVous->setPhoneNumber($data[$configJson["mappingField"]["phoneNumber"]]);          // Numéro de téléphone
-                $rendezVous->setStructure($data[$configJson["mappingField"]["structure"]]);            // Libellé de la structure
-                $rendezVous->setService($data[$configJson["mappingField"]["service"]]);              // Service        
+                $rendezVous->setPhoneNumber($data[$configJson["mappingField"]["phoneNumber"]]);              // Numéro de téléphone
+                $rendezVous->setStructure($data[$configJson["mappingField"]["structure"]]);                  // Libellé de la structure
+                $rendezVous->setService($data[$configJson["mappingField"]["service"]]);                      // Service        
+
+                $rendezVous->setToSend($data[$configJson["mappingField"]["sendMessage"]]);                   // Indique si l'on doit envoyer le message 
                 $listeRendezVous->addRendezVous($rendezVous);
             }
         }
@@ -159,7 +177,14 @@ if ($inputFile) {
     // Ferme le fichier
     fclose($inputFile);
     fclose($outputSuccessFile);
-
+    // Ecriture de la synthèse de l'envoi dans le fichier synthèse
+    $ligne = array();
+    $ligne[] =  $listeRendezVous->getCampaignID();
+    $ligne[] = date("Y-m-d");
+    $ligne[] = $listeRendezVous->NumberOfRendezVous();
+    $ligne[] = $listeRendezVous->getNbEnvois();
+    fputcsv($outputSummaryFile, $ligne,";");
+    fclose($outputSummaryFile);
     // Envoi du mail de synthèse
     if (($configJson['mail']['sendReport'] == true)) {
         $manager->display('> Envoi du mail du rapport de synthèse');
