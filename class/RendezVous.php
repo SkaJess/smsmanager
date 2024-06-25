@@ -12,7 +12,7 @@ class RendezVous
     private $timeAppointment;
     private $message;
     private $structure;
-    private $toSend = false;
+    private $smsAgreement = false;
 
     private $smsId;
     private $smsStatusCode;
@@ -50,14 +50,14 @@ class RendezVous
         $this->structure = $structure;
     }
 
-    public function setToSend($isToSend)
+    public function setSmsAgreement($smsAgreement)
     {
-        return $this->toSend = $isToSend;
+        $this->smsAgreement = $smsAgreement;
     }
 
-    public function isToSend()
+    public function isSmsAgreement()
     {
-        return $this->toSend;
+        return $this->smsAgreement;
     }
 
 

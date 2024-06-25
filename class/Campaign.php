@@ -8,6 +8,7 @@ class Campaign
     private $nbRendezVous = array();
     private SMSInterface $smsProvider;
     private int $nbEnvois = 0;
+    private int $nbRdvSansAccordSMS = 0;
     private int $nbErreurs = 0;
     private int $maxIntervalDate = 0;
     private $maxSMSByPhoneNumber = 1;
@@ -59,6 +60,10 @@ class Campaign
     {
         return count($this->listeRendezVous);
     }
+
+    public function NumberOfRendezVousWithoutSMSAgreement() {
+        return $this->nbRdvSansAccordSMS;
+    }
     public function setMaxSMSByPhoneNumber(int $maxSMSByPhoneNumber)
     {
         if ($maxSMSByPhoneNumber > 0) {
@@ -94,59 +99,63 @@ class Campaign
             $manager->display("");
             $manager->display(" > Numéro de téléphone  : " . $rdv->getPhoneNumber() . " -> Numéro de téléphone formaté : " . $rdv->getFormatedPhoneNumber());
             $manager->display(" > Nb de Rdv Programmés : " . $this->getNbRdvByPhoneNumber($rdv->getFormatedPhoneNumber()));
-            $checkDate = $rdv->isDateOk($this->getNow(), $this->getMaxIntervalDate());
-            if ($checkDate['statusCode'] == true) {
-                if ($rdv->isMobilePhone()) {
-                    $request = $this->smsProvider->prepareSMS($rdv->preparationMessage(), $rdv->getFormatedPhoneNumber());
-                    if ($manager->getMode() == ApplicationManager::MODE_PRODUCTION) {
-                        if ($this->getMaxSMSByPhoneNumber() >= $this->getNbRdvByPhoneNumber($rdv->getFormatedPhoneNumber())) {
-                            $response = $this->smsProvider->sendSMS();
-                            $manager->display(" > Envoi du SMS : PRODUCTION");
-                            $rdv->setSmsStatusCode($response->getCode());
-                            $rdv->setSmsstatusDescription($response->getDescription());
-                            $rdv->setSmsId($response->getSMSId());
-                            $manager->display(" > Code Réponse : " . $response->getCode());
-                            $manager->display(" > Description Réponse : " . $response->getDescription());
-                            $manager->display(" > ID SMS : " . $response->getSMSId());
-                            if ($rdv->getSmsStatusCode() == 0) {
-                                $manager->display(" > SMS Correctement envoyé ");
-                                $this->nbEnvois++;
+            if ($rdv->isSmsAgreement())  { 
+                $checkDate = $rdv->isDateOk($this->getNow(), $this->getMaxIntervalDate());
+                if ($checkDate['statusCode'] == true) {
+                    if ($rdv->isMobilePhone()) {
+                        $request = $this->smsProvider->prepareSMS($rdv->preparationMessage(), $rdv->getFormatedPhoneNumber());
+                        if ($manager->getMode() == ApplicationManager::MODE_PRODUCTION) {
+                            if ($this->getMaxSMSByPhoneNumber() >= $this->getNbRdvByPhoneNumber($rdv->getFormatedPhoneNumber())) {
+                                $response = $this->smsProvider->sendSMS();
+                                $manager->display(" > Envoi du SMS : PRODUCTION");
+                                $rdv->setSmsStatusCode($response->getCode());
+                                $rdv->setSmsstatusDescription($response->getDescription());
+                                $rdv->setSmsId($response->getSMSId());
+                                $manager->display(" > Code Réponse : " . $response->getCode());
+                                $manager->display(" > Description Réponse : " . $response->getDescription());
+                                $manager->display(" > ID SMS : " . $response->getSMSId());
+                                if ($rdv->getSmsStatusCode() == 0) {
+                                    $manager->display(" > SMS Correctement envoyé ");
+                                    $this->nbEnvois++;
+                                } else {
+                                    $manager->display(" > Erreur lors de l'envoi du SMS ");
+                                    $this->nbErreurs++;
+                                    $listeAnomalies[] = $rdv;
+                                }
                             } else {
-                                $manager->display(" > Erreur lors de l'envoi du SMS ");
+                                $manager->display(" > Trop de SMS à envoyer pour ce numéro");
                                 $this->nbErreurs++;
                                 $listeAnomalies[] = $rdv;
                             }
                         } else {
-                            $manager->display(" > Trop de SMS à envoyer pour ce numéro");
+                            $manager->display(" > Simulation d'envoi de SMS");
+                            $rdv->setSmsStatusCode(-1);
+                            $rdv->setSmsstatusDescription('non envoyé:mode debug');
+                            $rdv->setSmsId(0);
                             $this->nbErreurs++;
-                            $listeAnomalies[] = $rdv;
                         }
                     } else {
-                        $manager->display(" > Simulation d'envoi de SMS");
-                        $rdv->setSmsStatusCode(-1);
-                        $rdv->setSmsstatusDescription('non envoyé:mode debug');
-                        $rdv->setSmsId(0);
+                        $manager->display(" > Numéro de Téléphone incorrect ");
+                        $rdv->setSmsStatusCode(-2);
+                        $rdv->setSmsstatusDescription('Numéro de téléphone incorrect');
                         $this->nbErreurs++;
+                        $listeAnomalies[] = $rdv;
+                        $rdv->setSmsId(0);
                     }
                 } else {
-                    $manager->display(" > Numéro de Téléphone incorrect ");
-                    $rdv->setSmsStatusCode(-2);
-                    $rdv->setSmsstatusDescription('Numéro de téléphone incorrect');
+                    $manager->display(" > Date non valide : " . $checkDate['description']);
+                    $rdv->setSmsStatusCode(-3);
+                    $rdv->setSmsstatusDescription($checkDate['description']);
                     $this->nbErreurs++;
                     $listeAnomalies[] = $rdv;
                     $rdv->setSmsId(0);
                 }
+        
             } else {
-                $manager->display(" > Date non valide : " . $checkDate['description']);
-                $rdv->setSmsStatusCode(-3);
-                $rdv->setSmsstatusDescription($checkDate['description']);
-                $this->nbErreurs++;
-                $listeAnomalies[] = $rdv;
-                $rdv->setSmsId(0);
+                $this->nbRdvSansAccordSMS++;
             }
-
         }
-
+   
     }
 
     /**

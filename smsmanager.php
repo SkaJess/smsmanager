@@ -136,9 +136,16 @@ if ($inputFile) {
                 $rendezVous->setTimeAppointment($data[$configJson["mappingField"]["timeAppointment"]]);      // Heure du rendez-vous
                 $rendezVous->setPhoneNumber($data[$configJson["mappingField"]["phoneNumber"]]);              // Numéro de téléphone
                 $rendezVous->setStructure($data[$configJson["mappingField"]["structure"]]);                  // Libellé de la structure
-                $rendezVous->setService($data[$configJson["mappingField"]["service"]]);                      // Service        
-
-                $rendezVous->setToSend($data[$configJson["mappingField"]["sendMessage"]]);                   // Indique si l'on doit envoyer le message 
+                $rendezVous->setService($data[$configJson["mappingField"]["service"]]);                      // Service    
+                    if ($configJson['sendingMode']== 'FILTERED')  {
+                        if ($data[$configJson['mappingField']['smsAgreement']] == $configJson['filter']['agreementValue']) {
+                            $rendezVous->setSmsAgreement(true);
+                        } else {
+                            $rendezVous->setSmsAgreement(false);
+                        }
+                }   else {
+                    $rendezVous->setSmsAgreement(true);
+                }                
                 $listeRendezVous->addRendezVous($rendezVous);
             }
         }
@@ -182,6 +189,7 @@ if ($inputFile) {
     $ligne[] =  $listeRendezVous->getCampaignID();
     $ligne[] = date("Y-m-d");
     $ligne[] = $listeRendezVous->NumberOfRendezVous();
+    $ligne[] = $listeRendezVous->NumberOfRendezVous() - $listeRendezVous->NumberOfRendezVousWithoutSMSAgreement();
     $ligne[] = $listeRendezVous->getNbEnvois();
     fputcsv($outputSummaryFile, $ligne,";");
     fclose($outputSummaryFile);

@@ -6,10 +6,12 @@
     "phoneNumber": "2",
     "structure": "3",
     "service": "4",
-    "sendMessage" : "5",
+    "smsAgreement": "5"
   },
-  "sendMode" : "FILTERED",                    // indique le mode de traitement du fichier (ALL : On envoie un SMS à tous les destinataires / FILTERED : On envoie à tous les destinataires ayant la valeur 'sendValue')
-  "sendValue" : "Oui",
+  "sendingMode" : "FILTERED",
+  "filter" : {  
+    "agreementValue" : "Oui"
+  },
   "csvSeparator": "",                 // Champ séparateur CSV
   "ignoreFirstLines": "",             // Indique le nombre de lignes qui seront ignorées, Exemple : Si égal à 1, la première ligne est ignorée
   "maxIntervalDate": "",              // Si différent à 0, indique le nombre de jours max de différences avec la date du jour. Si c'est supérieur, le SMS n'est pas envoyé
