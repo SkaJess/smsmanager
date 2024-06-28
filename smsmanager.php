@@ -205,6 +205,11 @@ if ($inputFile) {
     $ligne[] =  $listeRendezVous->getCampaignID();
     $ligne[] =  $manager->getSourceFile();
     $ligne[] = date("Y-m-d");
+    if ($manager->getMode() == ApplicationManager::MODE_PRODUCTION) {
+        $ligne[] = "PRODUCTION";
+    } else {
+        $ligne[] = "DEBUG";
+    }
     $ligne[] = $listeRendezVous->NumberOfRendezVous();
     $ligne[] = $listeRendezVous->NumberOfRendezVous() - $listeRendezVous->NumberOfRendezVousWithoutSMSAgreement();
     $ligne[] = $listeRendezVous->getNbEnvois();

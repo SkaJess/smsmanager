@@ -1,15 +1,20 @@
 {
-  "campaignID" : "RAPPEL_RDV",          // Identifiant de Campagne.
-  "mappingField": {                   // Mappage des zones du fichier source 
+"campaignID" : "RAPPEL_RDV",          // identifiant de Campagne
+  "mappingField": {                   
     "dateAppointment": "0",
     "timeAppointment": "1",
     "phoneNumber": "2",
     "structure": "3",
     "service": "4",
-    "smsAgreement": "5"
+    "smsAgreement": "5",
+    "parameter1" : "6",
+    "parameter2" : null,
+    "parameter3" : null,
+    "parameter4" : null,
+    "parameter5" : null
   },
-  "sendingMode" : "FILTERED",
-  "filter" : {  
+  "filterAgreement" : {  
+    "active" : true,
     "agreementValue" : "Oui"
   },
   "csvSeparator": "",                 // Champ séparateur CSV
@@ -23,7 +28,7 @@
   "smsMode": {
     "apiToken": "123435Sample"        // Clé API Utilisé par le provider SMSMode
   },
-  "messageTemplate": "Bonjour #DESTINATAIRE#",
+  "messageTemplate" : "Bonjour #parameter1#, nous vous rappelons votre RDV le #dateAppointment# à #timeAppointment# au #structure# - #service#",
   "summaryFile" : true,               // Si true, ecrit les données statisques dans le fichier de synthèse (summary.csv) dans outputDirectory
   "mail": {
     "sendReport": true,               // Si true, le programme envoie le rapport par mail
