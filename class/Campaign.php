@@ -106,6 +106,8 @@ class Campaign
                         $request = $this->smsProvider->prepareSMS($rdv->preparationMessage(), $rdv->getFormatedPhoneNumber());
                         if ($manager->getMode() == ApplicationManager::MODE_PRODUCTION) {
                             if ($this->getMaxSMSByPhoneNumber() >= $this->getNbRdvByPhoneNumber($rdv->getFormatedPhoneNumber())) {
+                                $rdv->preparationMessage();
+                                $manager->display(" > MessageTemplate : " . $rdv->getMessage());
                                 $response = $this->smsProvider->sendSMS();
                                 $manager->display(" > Envoi du SMS : PRODUCTION");
                                 $rdv->setSmsStatusCode($response->getCode());

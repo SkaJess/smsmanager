@@ -11,6 +11,8 @@ class RendezVous
     private $dateAppointment;
     private $timeAppointment;
     private $message;
+    private $parameter = array();
+    private $templateMessage;
     private $structure;
     private $smsAgreement = false;
 
@@ -30,6 +32,19 @@ class RendezVous
         $this->timeAppointment = $timeAppointment;
     }
 
+    public function setParameter($id,$value) {
+        $this->parameter[$id] = $value;
+    }
+
+    public function getParameter($id) {
+        if (isset($this->parameter[$id])) {
+          return $this->parameter[$id];
+        } else {
+          return null;
+        }
+    }
+
+
     public function getMessage()
     {
         return $this->message;
@@ -39,6 +54,17 @@ class RendezVous
     {
         $this->message = $message;
     }
+
+    public function getTemplateMessage()
+    {
+        return $this->templateMessage;
+    }
+
+    public function setTemplateMessage($message)
+    {
+        $this->templateMessage = $message;
+    }
+
 
     public function getStructure()
     {
@@ -147,7 +173,45 @@ class RendezVous
 
     public function preparationMessage()
     {
-        $this->message = "Bonjour, nous vous rappelons votre RDV le " . $this->getDateAppointment()->format("d/m/Y") . " à " . $this->getTimeAppointment() . " au " . $this->getStructure() . " - " . $this->getService();
+        //$this->message = "Bonjour, nous vous rappelons votre RDV le " . $this->getDateAppointment()->format("d/m/Y") . " à " . $this->getTimeAppointment() . " au " . $this->getStructure() . " - " . $this->getService();
+        $this->message = $this->templateMessage;
+        if ($this->getDateAppointment() != null) {
+            $resultat = str_replace("#dateAppointment#", $this->getDateAppointment()->format("d/m/Y"),$this->getMessage());
+            $this->setMessage($resultat);
+        }
+        if ($this->getTimeAppointment() != null) {
+            $resultat = str_replace("#timeAppointment#", $this->getTimeAppointment(),$this->getMessage());
+            $this->setMessage($resultat);
+        }
+        if ($this->getStructure() != null) {
+            $resultat = str_replace("#structure#", $this->getStructure(),$this->getMessage());
+            $this->setMessage($resultat);
+        }
+        if ($this->getService() != null) {
+            $resultat = str_replace("#service#", $this->getService(),$this->getMessage());
+            $this->setMessage($resultat);
+        }
+        if ($this->getParameter(1) != null) {
+            $resultat = str_replace("#parameter1#", $this->getParameter(1),$this->getMessage());
+            $this->setMessage($resultat);
+        }
+        if ($this->getParameter(2) != null) {
+            $resultat = str_replace("#parameter1#", $this->getParameter(2),$this->getMessage());
+            $this->setMessage($resultat);
+        }
+        if ($this->getParameter(3) != null) {
+            $resultat = str_replace("#parameter1#", $this->getParameter(3),$this->getMessage());
+            $this->setMessage($resultat);
+        }
+        if ($this->getParameter(4) != null) {
+            $resultat = str_replace("#parameter1#", $this->getParameter(4),$this->getMessage());
+            $this->setMessage($resultat);
+        }
+        if ($this->getParameter(5) != null) {
+            $resultat = str_replace("#parameter1#", $this->getParameter(5),$this->getMessage());
+            $this->setMessage($resultat);
+        }
+
         return $this->message;
     }
     public function envoyerSMSRappel()

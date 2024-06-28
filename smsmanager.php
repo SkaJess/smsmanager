@@ -137,15 +137,31 @@ if ($inputFile) {
                 $rendezVous->setPhoneNumber($data[$configJson["mappingField"]["phoneNumber"]]);              // Numéro de téléphone
                 $rendezVous->setStructure($data[$configJson["mappingField"]["structure"]]);                  // Libellé de la structure
                 $rendezVous->setService($data[$configJson["mappingField"]["service"]]);                      // Service    
-                    if ($configJson['sendingMode']== 'FILTERED')  {
-                        if ($data[$configJson['mappingField']['smsAgreement']] == $configJson['filter']['agreementValue']) {
+                    if ($configJson['filterAgreement']['active']== true)  {
+                        if ($data[$configJson['mappingField']['smsAgreement']] == $configJson['filterAgreement']['agreementValue']) {
                             $rendezVous->setSmsAgreement(true);
                         } else {
                             $rendezVous->setSmsAgreement(false);
                         }
                 }   else {
                     $rendezVous->setSmsAgreement(true);
-                }                
+                }   
+                if (isset($data[$configJson["mappingField"]["parameter1"]])) {
+                  $rendezVous->setParameter(1,$data[$configJson["mappingField"]["parameter1"]]);
+                }
+                if (isset($data[$configJson["mappingField"]["parameter2"]])) { 
+                    $rendezVous->setParameter(2,$data[$configJson["mappingField"]["parameter2"]]);
+                }
+                if (isset($data[$configJson["mappingField"]["parameter3"]])) { 
+                    $rendezVous->setParameter(2,$data[$configJson["mappingField"]["parameter3"]]);
+                }
+                if (isset($data[$configJson["mappingField"]["parameter4"]])) { 
+                    $rendezVous->setParameter(2,$data[$configJson["mappingField"]["parameter4"]]);
+                }
+                if (isset($data[$configJson["mappingField"]["parameter5"]])) { 
+                    $rendezVous->setParameter(2,$data[$configJson["mappingField"]["parameter5"]]);
+                }                                                
+                $rendezVous->setTemplateMessage($configJson['messageTemplate']);
                 $listeRendezVous->addRendezVous($rendezVous);
             }
         }
@@ -187,6 +203,7 @@ if ($inputFile) {
     // Ecriture de la synthèse de l'envoi dans le fichier synthèse
     $ligne = array();
     $ligne[] =  $listeRendezVous->getCampaignID();
+    $ligne[] =  $manager->getSourceFile();
     $ligne[] = date("Y-m-d");
     $ligne[] = $listeRendezVous->NumberOfRendezVous();
     $ligne[] = $listeRendezVous->NumberOfRendezVous() - $listeRendezVous->NumberOfRendezVousWithoutSMSAgreement();
