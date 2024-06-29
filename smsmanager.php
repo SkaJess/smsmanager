@@ -203,7 +203,7 @@ if ($inputFile) {
     fclose($inputFile);
     fclose($outputSuccessFile);
     $nbSMSAEnvoyer = $listeRendezVous->NumberOfRendezVous() - $listeRendezVous->NumberOfRendezVousWithoutSMSAgreement();
-    if (($configJson['mail']['sendReport'] == true)) {
+    if (($configJson['summaryFile'] == true)) {
         // Ecriture de la synthèse de l'envoi dans le fichier synthèse
         $ligne = array();
         $ligne[] =  $listeRendezVous->getCampaignID();
@@ -221,7 +221,7 @@ if ($inputFile) {
         fclose($outputSummaryFile);
     }
     // Envoi du mail de synthèse
-    if (($configJson['summaryFile'] == true)) {
+     if (($configJson['mail']['sendReport'] == true)) { 
         $manager->display('> Envoi du mail du rapport de synthèse');
         $mail = new PHPMailer;
         $mail->isSMTP();
