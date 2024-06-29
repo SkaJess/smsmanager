@@ -211,7 +211,8 @@ if ($inputFile) {
         $ligne[] = "DEBUG";
     }
     $ligne[] = $listeRendezVous->NumberOfRendezVous();
-    $ligne[] = $listeRendezVous->NumberOfRendezVous() - $listeRendezVous->NumberOfRendezVousWithoutSMSAgreement();
+    $nbSMSAEnvoyer = $listeRendezVous->NumberOfRendezVous() - $listeRendezVous->NumberOfRendezVousWithoutSMSAgreement();
+    $ligne[] = $nbSMSAEnvoyer;
     $ligne[] = $listeRendezVous->getNbEnvois();
     fputcsv($outputSummaryFile, $ligne,";");
     fclose($outputSummaryFile);
@@ -250,8 +251,8 @@ if ($inputFile) {
 		} else {
 			$prefix = "";
 		}
-        $mail->Subject = '['.$prefix.'Rapport SMS - ' . $campaignStatus . '] Synthèse des envois de confirmation de rendez-vous par SMS';
-        $mail->Body = 'Nombre de rendez-vous  : ' . $listeRendezVous->NumberOfRendezVous() . "<br/>Nb de SMS de rappels de rendez-vous envoyés : " . $listeRendezVous->getNbEnvois() . "<br/>Nb d'anomalies identifiées : " . $listeRendezVous->getNbErreurs();
+        $mail->Subject = '['.$prefix.'Rapport SMS - ' . $campaignStatus . '] Synthèse des envois SMS '.$configJson['campaignID'];
+        $mail->Body = 'Nom du fichier traité : '.basename($manager->getSourceFile(), ".csv").'<br/>Nombre d enregistrements  : ' . $listeRendezVous->NumberOfRendezVous(). "<br/>Nb de SMS à envoyer : ".$nbSMSAEnvoyer."<br/>Nb de SMS de rappels de rendez-vous envoyés : " . $listeRendezVous->getNbEnvois() . "<br/>Nb d'anomalies identifiées : " . $listeRendezVous->getNbErreurs();
         $mail->addAttachment($manager->getOutputFile());
         if (!$mail->send()) {
             $manager->display("Erreur lors de l'envoi du mail de synthèse " . $mail->ErrorInfo);
