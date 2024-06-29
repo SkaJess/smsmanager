@@ -173,7 +173,6 @@ class RendezVous
 
     public function preparationMessage()
     {
-        //$this->message = "Bonjour, nous vous rappelons votre RDV le " . $this->getDateAppointment()->format("d/m/Y") . " à " . $this->getTimeAppointment() . " au " . $this->getStructure() . " - " . $this->getService();
         $this->message = $this->templateMessage;
         if ($this->getDateAppointment() != null) {
             $resultat = str_replace("#dateAppointment#", $this->getDateAppointment()->format("d/m/Y"),$this->getMessage());
