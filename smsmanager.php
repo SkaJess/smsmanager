@@ -102,11 +102,14 @@ if ($statusOutputFile == true) {
     $manager->display(" > Ouverture du fichier des envois SMS : ECHEC ");
 }
 
-$outputSummaryFile = fopen($manager->getSummaryFile(), 'a');
-if ($outputSummaryFile) {
-    $statusSummaryFile = true;
-}
+$statusSummaryFile = false;
+if (($configJson['summaryFile'] == true)) {
 
+    $outputSummaryFile = fopen($manager->getSummaryFile(), 'a');
+    if ($outputSummaryFile) {
+        $statusSummaryFile = true;
+    }
+}
 
 if ($statusSummaryFile == true) {
     $manager->display(" > Ouverture du fichier de Synthèse Historique : OK");
@@ -199,24 +202,26 @@ if ($inputFile) {
     // Ferme le fichier
     fclose($inputFile);
     fclose($outputSuccessFile);
-    // Ecriture de la synthèse de l'envoi dans le fichier synthèse
-    $ligne = array();
-    $ligne[] =  $listeRendezVous->getCampaignID();
-    $ligne[] =  $manager->getSourceFile();
-    $ligne[] = date("Y-m-d");
-    if ($manager->getMode() == ApplicationManager::MODE_PRODUCTION) {
-        $ligne[] = "PRODUCTION";
-    } else {
-        $ligne[] = "DEBUG";
-    }
-    $ligne[] = $listeRendezVous->NumberOfRendezVous();
     $nbSMSAEnvoyer = $listeRendezVous->NumberOfRendezVous() - $listeRendezVous->NumberOfRendezVousWithoutSMSAgreement();
-    $ligne[] = $nbSMSAEnvoyer;
-    $ligne[] = $listeRendezVous->getNbEnvois();
-    fputcsv($outputSummaryFile, $ligne,";");
-    fclose($outputSummaryFile);
-    // Envoi du mail de synthèse
     if (($configJson['mail']['sendReport'] == true)) {
+        // Ecriture de la synthèse de l'envoi dans le fichier synthèse
+        $ligne = array();
+        $ligne[] =  $listeRendezVous->getCampaignID();
+        $ligne[] =  basename($manager->getSourceFile(), ".csv");
+        $ligne[] = date("Y-m-d");
+        if ($manager->getMode() == ApplicationManager::MODE_PRODUCTION) {
+            $ligne[] = "PRODUCTION";
+        } else {
+            $ligne[] = "DEBUG";
+        }
+        $ligne[] = $listeRendezVous->NumberOfRendezVous();
+        $ligne[] = $nbSMSAEnvoyer;
+        $ligne[] = $listeRendezVous->getNbEnvois();
+        fputcsv($outputSummaryFile, $ligne,";");
+        fclose($outputSummaryFile);
+    }
+    // Envoi du mail de synthèse
+    if (($configJson['summaryFile'] == true)) {
         $manager->display('> Envoi du mail du rapport de synthèse');
         $mail = new PHPMailer;
         $mail->isSMTP();
