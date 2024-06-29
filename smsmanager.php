@@ -250,7 +250,7 @@ if ($inputFile) {
 		} else {
 			$prefix = "";
 		}
-        $mail->Subject = '['.$prefix.'Rapport SMS - ' . $campaignStatus . '] Synthèse des envois SMS '.$configJson['campaignID'];
+        $mail->Subject = '['.$prefix.'Rapport SMS - ' . $campaignStatus . '] Synthèse des envois SMS '.basename($manager->getSourceFile(), ".csv");
         $mail->Body = 'Nom du fichier traité : '.basename($manager->getSourceFile(), ".csv").'<br/>Nombre d enregistrements  : ' . $listeRendezVous->NumberOfRendezVous(). "<br/>Nb de SMS à envoyer : ".$nbSMSAEnvoyer."<br/>Nb de SMS envoyés : " . $listeRendezVous->getNbEnvois() . "<br/>Nb d'anomalies identifiées : " . $listeRendezVous->getNbErreurs();
         $mail->addAttachment($manager->getOutputFile());
         if (!$mail->send()) {
