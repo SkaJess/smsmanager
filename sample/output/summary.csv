@@ -1,2 +1,3 @@
 ﻿Campagne;NomFichier;Date;Mode;NbMessages;NbMessagesAvecAccordExplicite;NbMessagesEnvoyes
 RAPPEL_RDV;".\sample\input\sample.csv";2024-06-28;DEBUG;2;1;0
+RAPPEL_RDV;".\sample\input\sample.csv";2024-06-29;DEBUG;2;1;0

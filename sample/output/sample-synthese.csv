@@ -1,3 +1,3 @@
 ﻿"Date Rendez Vous";"Heure Rendez Vous";"Numéro de Téléphone";Structure;Service;"Numéro de téléphone formaté";"Nombre de Rendez vous";"Code Statut SMS";"Description Statut SMS";"ID SMS"
-2024-07-03;07:00;0101010101;"CH du Sud";"IMAGERIE MEDICALE";0682140675;2;-1;"non envoyé:mode debug";0
-2024-07-03;07:00;0682140675;"CH du Sud";"IMAGERIE MEDICALE";0682140675;2;;;
+2024-07-03;07:00;0601010101;"CH du Sud";"IMAGERIE MEDICALE";0601010101;1;-1;"non envoyé:mode debug";0
+2024-07-03;07:00;0602020202;"CH du Sud";"IMAGERIE MEDICALE";0602020202;1;;;

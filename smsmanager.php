@@ -16,7 +16,6 @@ if ($argc > 3) {
     $manager->display(" > Lancer la commande comme cela : /path/to/php <inputfile> <optional:path/to/file/config.json> ");
     $manager->display(" > Si aucune parametre est fourni, le programme va recherche le fichier config.json dans le dossier /config");
     $manager->display(" > Utiliez le fichier config.json.sample comme exemple pour créer votre propre fichier config.json");
-
     die();
 }
 // Chargement du fichier JSON
@@ -252,7 +251,7 @@ if ($inputFile) {
 			$prefix = "";
 		}
         $mail->Subject = '['.$prefix.'Rapport SMS - ' . $campaignStatus . '] Synthèse des envois SMS '.$configJson['campaignID'];
-        $mail->Body = 'Nom du fichier traité : '.basename($manager->getSourceFile(), ".csv").'<br/>Nombre d enregistrements  : ' . $listeRendezVous->NumberOfRendezVous(). "<br/>Nb de SMS à envoyer : ".$nbSMSAEnvoyer."<br/>Nb de SMS de rappels de rendez-vous envoyés : " . $listeRendezVous->getNbEnvois() . "<br/>Nb d'anomalies identifiées : " . $listeRendezVous->getNbErreurs();
+        $mail->Body = 'Nom du fichier traité : '.basename($manager->getSourceFile(), ".csv").'<br/>Nombre d enregistrements  : ' . $listeRendezVous->NumberOfRendezVous(). "<br/>Nb de SMS à envoyer : ".$nbSMSAEnvoyer."<br/>Nb de SMS envoyés : " . $listeRendezVous->getNbEnvois() . "<br/>Nb d'anomalies identifiées : " . $listeRendezVous->getNbErreurs();
         $mail->addAttachment($manager->getOutputFile());
         if (!$mail->send()) {
             $manager->display("Erreur lors de l'envoi du mail de synthèse " . $mail->ErrorInfo);
