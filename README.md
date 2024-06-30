@@ -1,6 +1,6 @@
 Version 1.1 - 20-06-2024
 
-Bienvenue sur le projet SMSManager ! Ce projet est conçu pour faciliter l'envoi de messages SMS en utilisant des données provenant de fichiers CSV. Ce programme a été conçu pour permettre d'envoyer des rappels de rendez-vous par SMS, mais il pourrait facilement être modifié pour envoyer d'autres types de messages.
+Bienvenue sur le projet SMSManager ! Ce projet est conçu pour faciliter l'envoi de messages SMS en utilisant des données provenant de fichiers CSV. Ce programme a été conçu pour permettre d'envoyer à l'origine des rappels de rendez-vous par SMS, mais il peut désormais être utilisé pour d'autres usages. C'est désormais très simple, il suffit de définir des modèles de messages en y insérant des parametres provenant du fichier CSV.
 
 Objectif
 Le but principal de SMSManager est de fournir une solution simple et fiable pour envoyer des rappels de rendez-vous via SMS. Cette fonctionnalité est utile pour les entreprises et les professionnels qui cherchent à améliorer la communication avec leurs clients ou patients.
