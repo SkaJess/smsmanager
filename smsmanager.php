@@ -182,22 +182,24 @@ if ($inputFile) {
     $entete = array("Date Rendez Vous", "Heure Rendez Vous", "Numéro de Téléphone", "Structure", "Service", "Numéro de téléphone formaté", "Nombre de Rendez vous", "Code Statut SMS", "Description Statut SMS", "ID SMS");
     fputcsv($outputSuccessFile, $entete, ";");
     foreach ($listeRendezVous->getListeRendezVous() as $rendezVous) {
-        $ligne = array();
-        if ($rendezVous->getDateAppointment()) {
-            $ligne[] = $rendezVous->getDateAppointment()->format("Y-m-d");
-        } else {
-            $ligne[] = $rendezVous->getOriginalDateAppointment();
-        }
-        $ligne[] = $rendezVous->getTimeAppointment();
-        $ligne[] = $rendezVous->getPhoneNumber();
-        $ligne[] = $rendezVous->getStructure();
-        $ligne[] = $rendezVous->getService();
-        $ligne[] = $rendezVous->getFormatedPhoneNumber();
-        $ligne[] = $listeRendezVous->getNbRdvByPhoneNumber($rendezVous->getFormatedPhoneNumber());
-        $ligne[] = $rendezVous->getSmsStatusCode();
-        $ligne[] = $rendezVous->getSmsstatusDescription();
-        $ligne[] = $rendezVous->getSmsId();
-        fputcsv($outputSuccessFile, $ligne, ";");
+        if($rendezVous->isSmsAgreement()) {
+            $ligne = array();
+            if ($rendezVous->getDateAppointment()) {
+                $ligne[] = $rendezVous->getDateAppointment()->format("Y-m-d");
+            } else {
+                $ligne[] = $rendezVous->getOriginalDateAppointment();
+            }
+            $ligne[] = $rendezVous->getTimeAppointment();
+            $ligne[] = $rendezVous->getPhoneNumber();
+            $ligne[] = $rendezVous->getStructure();
+            $ligne[] = $rendezVous->getService();
+            $ligne[] = $rendezVous->getFormatedPhoneNumber();
+            $ligne[] = $listeRendezVous->getNbRdvByPhoneNumber($rendezVous->getFormatedPhoneNumber());
+            $ligne[] = $rendezVous->getSmsStatusCode();
+            $ligne[] = $rendezVous->getSmsstatusDescription();
+            $ligne[] = $rendezVous->getSmsId();
+            fputcsv($outputSuccessFile, $ligne, ";");
+       }   
     }
     // Ferme le fichier
     fclose($inputFile);
