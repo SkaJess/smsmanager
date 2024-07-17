@@ -108,14 +108,19 @@ class Campaign
                             if ($this->getMaxSMSByPhoneNumber() >= $this->getNbRdvByPhoneNumber($rdv->getFormatedPhoneNumber())) {
                                 $rdv->preparationMessage();
                                 $manager->display(" > MessageTemplate : " . $rdv->getMessage());
-                                $response = $this->smsProvider->sendSMS();
-                                $manager->display(" > Envoi du SMS : PRODUCTION");
-                                $rdv->setSmsStatusCode($response->getCode());
-                                $rdv->setSmsstatusDescription($response->getDescription());
-                                $rdv->setSmsId($response->getSMSId());
-                                $manager->display(" > Code Réponse : " . $response->getCode());
-                                $manager->display(" > Description Réponse : " . $response->getDescription());
-                                $manager->display(" > ID SMS : " . $response->getSMSId());
+                                try {
+									$response = $this->smsProvider->sendSMS();
+									$rdv->setSmsStatusCode($response->getCode());
+									$rdv->setSmsstatusDescription($response->getDescription());
+									$rdv->setSmsId($response->getSMSId());
+									$manager->display(" > Code Réponse : " . $response->getCode());
+									$manager->display(" > Description Réponse : " . $response->getDescription());
+									$manager->display(" > ID SMS : " . $response->getSMSId());									
+								} catch (Exception $e) {
+									$rdv->setSmsStatusCode(-4);		
+									$rdv->setSmsstatusDescription($e->getMessage());
+									$rdv->setSmsId(0);
+								}
                                 if ($rdv->getSmsStatusCode() == 0) {
                                     $manager->display(" > SMS Correctement envoyé ");
                                     $this->nbEnvois++;
