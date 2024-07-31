@@ -182,7 +182,6 @@ if ($inputFile) {
     $entete = array("Date Rendez Vous", "Heure Rendez Vous", "Numéro de Téléphone", "Structure", "Service", "Numéro de téléphone formaté", "Nombre de Rendez vous", "Code Statut SMS", "Description Statut SMS", "ID SMS");
     fputcsv($outputSuccessFile, $entete, ";");
     foreach ($listeRendezVous->getListeRendezVous() as $rendezVous) {
-        if($rendezVous->isSmsAgreement()) {
             $ligne = array();
             if ($rendezVous->getDateAppointment()) {
                 $ligne[] = $rendezVous->getDateAppointment()->format("Y-m-d");
@@ -199,7 +198,6 @@ if ($inputFile) {
             $ligne[] = $rendezVous->getSmsstatusDescription();
             $ligne[] = $rendezVous->getSmsId();
             fputcsv($outputSuccessFile, $ligne, ";");
-       }   
     }
     // Ferme le fichier
     fclose($inputFile);
