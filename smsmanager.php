@@ -1,10 +1,10 @@
 <?php
 
-require_once ('./vendor/autoload.php');
-require_once ('./class/RendezVous.php');
-require_once ('./class/Campaign.php');
-require_once ('./class/ApplicationManager.php');
-require_once ('./class/SMSMode.php');
+require_once('./vendor/autoload.php');
+require_once('./class/RendezVous.php');
+require_once('./class/Campaign.php');
+require_once('./class/ApplicationManager.php');
+require_once('./class/SMSMode.php');
 
 use PHPMailer\PHPMailer\PHPMailer;
 
@@ -76,6 +76,9 @@ if ($configJson['debugMode'] == true) {
 }
 
 $manager->display(" > Vérification de la configuration");
+if (!isset($configJson['mail']['sendFailsOnly'])) {
+    $configJson['mail']['sendFailsOnly'] = true;
+}
 $statusInputFile = false;
 $statusOutputFile = false;
 if (file_exists($manager->getSourceFile())) {
@@ -132,37 +135,37 @@ if ($inputFile) {
     // Lit et affiche chaque ligne du fichier
     while (($data = fgetcsv($inputFile, 0, $configJson['csvSeparator'])) !== false) {
         if ($idLigne > $configJson['ignoreFirstLines']) {
-            if (count($data) > 4 && strlen(trim($data[0])) > 1 ) {
+            if (count($data) > 4 && strlen(trim($data[0])) > 1) {
                 $rendezVous = new RendezVous();
                 $rendezVous->setDateAppointment($data[$configJson["mappingField"]["dateAppointment"]]);      // Date du rendez-vous
                 $rendezVous->setTimeAppointment($data[$configJson["mappingField"]["timeAppointment"]]);      // Heure du rendez-vous
                 $rendezVous->setPhoneNumber($data[$configJson["mappingField"]["phoneNumber"]]);              // Numéro de téléphone
                 $rendezVous->setStructure($data[$configJson["mappingField"]["structure"]]);                  // Libellé de la structure
                 $rendezVous->setService($data[$configJson["mappingField"]["service"]]);                      // Service    
-                    if ($configJson['filterAgreement']['active']== true)  {
-                        if ($data[$configJson['mappingField']['smsAgreement']] == $configJson['filterAgreement']['agreementValue']) {
-                            $rendezVous->setSmsAgreement(true);
-                        } else {
-                            $rendezVous->setSmsAgreement(false);
-                        }
-                }   else {
+                if ($configJson['filterAgreement']['active'] == true) {
+                    if ($data[$configJson['mappingField']['smsAgreement']] == $configJson['filterAgreement']['agreementValue']) {
+                        $rendezVous->setSmsAgreement(true);
+                    } else {
+                        $rendezVous->setSmsAgreement(false);
+                    }
+                } else {
                     $rendezVous->setSmsAgreement(true);
-                }   
+                }
                 if (isset($data[$configJson["mappingField"]["parameter1"]])) {
-                  $rendezVous->setParameter(1,$data[$configJson["mappingField"]["parameter1"]]);
+                    $rendezVous->setParameter(1, $data[$configJson["mappingField"]["parameter1"]]);
                 }
-                if (isset($data[$configJson["mappingField"]["parameter2"]])) { 
-                    $rendezVous->setParameter(2,$data[$configJson["mappingField"]["parameter2"]]);
+                if (isset($data[$configJson["mappingField"]["parameter2"]])) {
+                    $rendezVous->setParameter(2, $data[$configJson["mappingField"]["parameter2"]]);
                 }
-                if (isset($data[$configJson["mappingField"]["parameter3"]])) { 
-                    $rendezVous->setParameter(2,$data[$configJson["mappingField"]["parameter3"]]);
+                if (isset($data[$configJson["mappingField"]["parameter3"]])) {
+                    $rendezVous->setParameter(2, $data[$configJson["mappingField"]["parameter3"]]);
                 }
-                if (isset($data[$configJson["mappingField"]["parameter4"]])) { 
-                    $rendezVous->setParameter(2,$data[$configJson["mappingField"]["parameter4"]]);
+                if (isset($data[$configJson["mappingField"]["parameter4"]])) {
+                    $rendezVous->setParameter(2, $data[$configJson["mappingField"]["parameter4"]]);
                 }
-                if (isset($data[$configJson["mappingField"]["parameter5"]])) { 
-                    $rendezVous->setParameter(2,$data[$configJson["mappingField"]["parameter5"]]);
-                }                                                
+                if (isset($data[$configJson["mappingField"]["parameter5"]])) {
+                    $rendezVous->setParameter(2, $data[$configJson["mappingField"]["parameter5"]]);
+                }
                 $rendezVous->setTemplateMessage($configJson['messageTemplate']);
                 $listeRendezVous->addRendezVous($rendezVous);
             }
@@ -182,22 +185,22 @@ if ($inputFile) {
     $entete = array("Date Rendez Vous", "Heure Rendez Vous", "Numéro de Téléphone", "Structure", "Service", "Numéro de téléphone formaté", "Nombre de Rendez vous", "Code Statut SMS", "Description Statut SMS", "ID SMS");
     fputcsv($outputSuccessFile, $entete, ";");
     foreach ($listeRendezVous->getListeRendezVous() as $rendezVous) {
-            $ligne = array();
-            if ($rendezVous->getDateAppointment()) {
-                $ligne[] = $rendezVous->getDateAppointment()->format("Y-m-d");
-            } else {
-                $ligne[] = $rendezVous->getOriginalDateAppointment();
-            }
-            $ligne[] = $rendezVous->getTimeAppointment();
-            $ligne[] = $rendezVous->getPhoneNumber();
-            $ligne[] = $rendezVous->getStructure();
-            $ligne[] = $rendezVous->getService();
-            $ligne[] = $rendezVous->getFormatedPhoneNumber();
-            $ligne[] = $listeRendezVous->getNbRdvByPhoneNumber($rendezVous->getFormatedPhoneNumber());
-            $ligne[] = $rendezVous->getSmsStatusCode();
-            $ligne[] = $rendezVous->getSmsstatusDescription();
-            $ligne[] = $rendezVous->getSmsId();
-            fputcsv($outputSuccessFile, $ligne, ";");
+        $ligne = array();
+        if ($rendezVous->getDateAppointment()) {
+            $ligne[] = $rendezVous->getDateAppointment()->format("Y-m-d");
+        } else {
+            $ligne[] = $rendezVous->getOriginalDateAppointment();
+        }
+        $ligne[] = $rendezVous->getTimeAppointment();
+        $ligne[] = $rendezVous->getPhoneNumber();
+        $ligne[] = $rendezVous->getStructure();
+        $ligne[] = $rendezVous->getService();
+        $ligne[] = $rendezVous->getFormatedPhoneNumber();
+        $ligne[] = $listeRendezVous->getNbRdvByPhoneNumber($rendezVous->getFormatedPhoneNumber());
+        $ligne[] = $rendezVous->getSmsStatusCode();
+        $ligne[] = $rendezVous->getSmsstatusDescription();
+        $ligne[] = $rendezVous->getSmsId();
+        fputcsv($outputSuccessFile, $ligne, ";");
     }
     // Ferme le fichier
     fclose($inputFile);
@@ -206,8 +209,8 @@ if ($inputFile) {
     if (($configJson['summaryFile'] == true)) {
         // Ecriture de la synthèse de l'envoi dans le fichier synthèse
         $ligne = array();
-        $ligne[] =  $listeRendezVous->getCampaignID();
-        $ligne[] =  basename($manager->getSourceFile(), ".csv");
+        $ligne[] = $listeRendezVous->getCampaignID();
+        $ligne[] = basename($manager->getSourceFile(), ".csv");
         $ligne[] = date("Y-m-d");
         if ($manager->getMode() == ApplicationManager::MODE_PRODUCTION) {
             $ligne[] = "PRODUCTION";
@@ -217,11 +220,11 @@ if ($inputFile) {
         $ligne[] = $listeRendezVous->NumberOfRendezVous();
         $ligne[] = $nbSMSAEnvoyer;
         $ligne[] = $listeRendezVous->getNbEnvois();
-        fputcsv($outputSummaryFile, $ligne,";");
+        fputcsv($outputSummaryFile, $ligne, ";");
         fclose($outputSummaryFile);
     }
     // Envoi du mail de synthèse
-     if (($configJson['mail']['sendReport'] == true)) { 
+    if (($configJson['mail']['sendReport'] == true)) {
         $manager->display('> Envoi du mail du rapport de synthèse');
         $mail = new PHPMailer;
         $mail->isSMTP();
@@ -238,30 +241,31 @@ if ($inputFile) {
         $mail->addReplyTo($configJson['mail']['username'], 'smsmanager');
         $mail->addAddress($configJson['mail']['to'], '');
         $mail->isHTML(true);
-        if ($listeRendezVous->NumberOfRendezVous() > 0) {
-            if ($listeRendezVous->NumberOfRendezVous() == $listeRendezVous->getNbEnvois()) {
+        if ($nbSMSAEnvoyer > 0) {
+            if ($nbSMSAEnvoyer == $listeRendezVous->getNbEnvois()) {
                 $campaignStatus = "SUCCES";
             } elseif ($listeRendezVous->getNbEnvois() > 0) {
                 $campaignStatus = "PARTIEL";
             } else {
                 $campaignStatus = "ECHEC";
             }
-        }
-        else {
-              $campaignStatus = "AUCUN RDV";
+        } else {
+            $campaignStatus = "AUCUN RDV";
         }
         if ($manager->getMode() == ApplicationManager::MODE_DEBUG) {
-			$prefix = " SIMULATION ";
-		} else {
-			$prefix = "";
-		}
-        $mail->Subject = '['.$prefix.'Rapport SMS - ' . $campaignStatus . '] Synthèse des envois SMS '.basename($manager->getSourceFile(), ".csv");
-        $mail->Body = 'Nom du fichier traité : '.basename($manager->getSourceFile(), ".csv").'<br/>Nombre d enregistrements  : ' . $listeRendezVous->NumberOfRendezVous(). "<br/>Nb de SMS à envoyer : ".$nbSMSAEnvoyer."<br/>Nb de SMS envoyés : " . $listeRendezVous->getNbEnvois() . "<br/>Nb d'anomalies identifiées : " . $listeRendezVous->getNbErreurs();
-        $mail->addAttachment($manager->getOutputFile());
-        if (!$mail->send()) {
-            $manager->display("Erreur lors de l'envoi du mail de synthèse " . $mail->ErrorInfo);
+            $prefix = " SIMULATION ";
         } else {
-            $manager->display('Le mail de synthèse a été envoyé.');
+            $prefix = "";
+        }
+        if (($campaignStatus == "ECHEC") || ($configJson['mail']['sendFailsOnly'] == false)) {
+            $mail->Subject = '[' . $prefix . 'Rapport SMS - ' . $campaignStatus . '] Synthèse des envois SMS ' . basename($manager->getSourceFile(), ".csv");
+            $mail->Body = 'Nom du fichier traité : ' . basename($manager->getSourceFile(), ".csv") . '<br/>Nombre d enregistrements  : ' . $listeRendezVous->NumberOfRendezVous() . "<br/>Nb de SMS à envoyer : " . $nbSMSAEnvoyer . "<br/>Nb de SMS envoyés : " . $listeRendezVous->getNbEnvois() . "<br/>Nb d'anomalies identifiées : " . $listeRendezVous->getNbErreurs();
+            $mail->addAttachment($manager->getOutputFile());
+            if (!$mail->send()) {
+                $manager->display("Erreur lors de l'envoi du mail de synthèse " . $mail->ErrorInfo);
+            } else {
+                $manager->display('Le mail de synthèse a été envoyé.');
+            }
         }
     }
 }

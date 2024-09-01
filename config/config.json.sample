@@ -32,6 +32,7 @@
 "summaryFile" : true,               // Si true, ecrit les données statisques dans le fichier de synthèse (summary.csv) dans outputDirectory
   "mail": {
     "sendReport": true,               // Si true, le programme envoie le rapport par mail
+    "sendFailsOnly" : false,          // Si true, le programme envoie seulement les rapports qui sont en echec.
     "SMTPAuth": true,                  // Indique si le programme doit utiliser l'authentification SMTP
     "port": 587,                      // Indique le port utilisé pour l'envoi du mail
     "server": "mail.myServer.fr",     // Adresse du serveur de messagerie
